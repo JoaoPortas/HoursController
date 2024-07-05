@@ -1,10 +1,14 @@
-import Login from "@renderer/views/Login";
+import Login from "@renderer/views/auth/Login";
 
 const authRoutes = [
-  {
-    path: "/login",
-    element: <Login />,
-  },
+    {
+        path: '/signin',
+        element: <Login />,
+    },
+    {
+        path: '/signup',
+        element: <>Regist User</>,
+    },
 ];
 
-export default authRoutes;
+export default authRoutes

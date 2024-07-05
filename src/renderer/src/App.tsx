@@ -5,7 +5,7 @@ const App: React.FC = () => {
     return (
         <>
             <h1>Hello world</h1>
-            <Link to="/login">
+            <Link to="/signin">
                 login
             </Link>
             <br />

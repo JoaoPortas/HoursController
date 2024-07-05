@@ -1,7 +1,7 @@
-import '../assets/main.css'
+//import '../assets/main.css'
 import { Link } from 'react-router-dom'
 import Versions from '../components/Versions'
-import electronLogo from '../assets/electron.svg'
+import electronLogo from '../public/assets/electron.svg'
 import React from 'react'
 
 const Vite: React.FC = () => {
