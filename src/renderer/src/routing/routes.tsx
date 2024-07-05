@@ -1,6 +1,7 @@
 import App from "@renderer/App";
 import { createHashRouter } from "react-router-dom";
 import authRoutes from "./Auth/login";
+import Vite from "@renderer/views/Vite";
 
 const routes = [
     {
@@ -12,6 +13,14 @@ const routes = [
         ),
     },
     ...authRoutes,
+    {
+      path: "/vite",
+      element: (
+        <>
+          <Vite />
+        </>
+      ),
+  },
     {
         path: "view/:id",
         element: (
