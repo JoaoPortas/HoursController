@@ -1,4 +1,5 @@
 import Login from "@renderer/views/auth/Login";
+import Signup from '../../views/auth/Signup';
 
 const authRoutes = [
     {
@@ -7,7 +8,7 @@ const authRoutes = [
     },
     {
         path: '/signup',
-        element: <>Regist User</>,
+        element: <Signup />,
     },
 ];
 
