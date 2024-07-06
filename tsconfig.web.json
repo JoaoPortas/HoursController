@@ -4,8 +4,10 @@
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
-    "src/preload/*.d.ts"
-, "src/main/repository", "src/main/config"  ],
+    "src/preload/*.d.ts",
+    "src/main/repository", "src/main/config",
+    "src/shared/**/*",
+    "src/sgared/**/*.tsx",  ],
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
@@ -13,6 +15,9 @@
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
       ]
     }
   }

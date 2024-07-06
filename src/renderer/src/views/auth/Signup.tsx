@@ -2,8 +2,9 @@ import React, { FormEvent, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 //import styles from "@renderer/public/css/Login.module.css"
-import { UserRegist } from "@renderer/models/auth.model";
+
 //import { setupUsers } from "@renderer/repository/setup.repository";
+import { UserRegist } from '@shared/models/auth.model';
 
 const Signup: React.FC = () => {
 

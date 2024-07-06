@@ -1,8 +1,7 @@
-/*import { Statement } from 'sqlite3';
-import { IBaseUser, IUser } from '../../renderer/src/models/interfaces/user.interface';
-import { User } from '../../renderer/src/models/user.model';*/
-//import { db } from "@renderer/config/database";
-import { UserRegist } from '@renderer/models/auth.model';
+import { db } from '../config/database';
+import { Statement } from 'sqlite3';
+import { UserRegist } from '@shared/models/auth.model';
+
 
 export async function something(newUser: UserRegist): Promise<UserRegist> {
   console.log(newUser.username)
@@ -11,18 +10,16 @@ export async function something(newUser: UserRegist): Promise<UserRegist> {
 }
 
 export async function createUser(newUser: UserRegist): Promise<void> {
-    /*await db.serialize(() => {
-        const stmt = db.prepare
-    })*/
-    /*await db.serialize(() => {
-        const stmt = db.prepare('INSERT INTO users(number, name) VALUES (?, ?)');
-
-        stmt.run(user.number, user.name);
-
-        stmt.finalize();
-    })*/
+    await db.serialize(() => {
+          const stmt: Statement = db.prepare('INSERT INTO users(username, password, number, name, category, position) VALUES (?, ?, ?, ?, ?, ?)')
+          stmt.run(newUser.username, newUser.password, newUser.number, newUser.name, newUser.category, newUser.position)
+          stmt.finalize()
+    })
 }
+/*
+export async function getAllUsers(): Promise<Array<>> {
 
+}*/
 /*export async function getAllUsers(): Promise<Array<IUser> | null> {
     console.log("Getting all users")
 

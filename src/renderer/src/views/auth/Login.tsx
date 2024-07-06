@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import styles from "@renderer/public/css/Login.module.css"
+//import styles from "@renderer/public/css/Login.module.css"
 
 const Login: React.FC = () => {
     return (
