@@ -1,4 +1,4 @@
-import { IUserRegist } from "./interfaces/userRegist.mode";
+import { IUserRegist } from "./interfaces/userRegist.interface";
 
 export class UserRegist implements IUserRegist {
     username: string;

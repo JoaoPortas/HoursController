@@ -1,5 +1,9 @@
 import { db } from '../config/database';
 import { Statement } from 'sqlite3';
+
+import { IUser } from '@shared/models/interfaces/user.interface';
+import { User } from '@shared/models/user.model';
+//import { User } from '../../shared/models/user.model';
 import { UserRegist } from '@shared/models/auth.model';
 
 
@@ -9,17 +13,64 @@ export async function something(newUser: UserRegist): Promise<UserRegist> {
   return newUser
 }
 
-export async function createUser(newUser: UserRegist): Promise<void> {
-    await db.serialize(() => {
-          const stmt: Statement = db.prepare('INSERT INTO users(username, password, number, name, category, position) VALUES (?, ?, ?, ?, ?, ?)')
-          stmt.run(newUser.username, newUser.password, newUser.number, newUser.name, newUser.category, newUser.position)
-          stmt.finalize()
+export async function createUser(newUser: UserRegist): Promise<UserRegist | null> {
+    return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            const stmt: Statement = db.prepare('INSERT INTO users(username, password, number, name, category, position) VALUES (?, ?, ?, ?, ?, ?)')
+            stmt.run(
+                newUser.username,
+                newUser.password,
+                newUser.number,
+                newUser.name,
+                newUser.category,
+                newUser.position,
+                (err: Error) => {
+                    if (err) {
+                        console.error('Failed to create the user:', err)
+                        stmt.finalize()
+                        reject(err)
+                    }
+                    else {
+                        console.info('New user created', newUser)
+                        stmt.finalize()
+                        resolve(newUser)
+                    }
+                }
+            )
+        })
     })
 }
-/*
-export async function getAllUsers(): Promise<Array<>> {
 
-}*/
+export async function getAllUsers(): Promise<Array<IUser> | null> {
+    return new Promise((resolve, reject) => {
+        const users: Array<IUser> = []
+
+        db.all('SELECT userId, username, number, name, category, position FROM users', (err: Error, rows: Array<IUser>) => {
+            if (err) {
+                console.error("Failed to fetching users from database: ", err.message)
+                reject(err)
+                return;
+            }
+
+            rows.forEach((row: IUser) => {
+                users.push(new User(row.userId, row.username, row.number, row.name, row.category, row.position))
+            })
+
+            console.log(`Retrived ${users.length} users`);
+            resolve(users)
+        })
+    })
+    /*await db.each('SELECT userId, username, number, name, category, position FROM users', (err: Error | null, row: IUser) => {
+        if (err) {
+            console.log(err.message)
+        }
+
+        console.log(`User ID: ${row.userId}, UserName: ${row.username}, Name: ${row.name}`)
+    })*/
+
+    return null
+}
+
 /*export async function getAllUsers(): Promise<Array<IUser> | null> {
     console.log("Getting all users")
 
