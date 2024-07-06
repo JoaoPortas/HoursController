@@ -1,5 +1,9 @@
 import { db } from "../config/database";
 
+export async function setupDatabase() {
+    await setupUsers()
+}
+
 export async function setupUsers() {
   await db.serialize(() => {
       db.run('CREATE TABLE IF NOT EXISTS users (userId INTEGER PRIMARY KEY AUTOINCREMENT' +
