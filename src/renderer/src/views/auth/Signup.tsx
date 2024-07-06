@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
 //import styles from "@renderer/public/css/Login.module.css"
 
@@ -7,6 +7,12 @@ import { Link } from "react-router-dom";
 import { UserRegist } from '@shared/models/auth.model';
 
 const Signup: React.FC = () => {
+    const navigate: NavigateFunction = useNavigate()
+
+    async function testDB() {
+        const result = await window.electron.ipcRenderer.invoke("/users/getAll");
+        console.log(result)
+    }
 
     async function createUser(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
@@ -21,12 +27,17 @@ const Signup: React.FC = () => {
 
         const newUser: UserRegist = new UserRegist(username, password, personalId, name, category, workerFunction)
 
-        const result: string = await window.electron.ipcRenderer.invoke("/users/sendUser", newUser) as string;
+        try {
+            const result: UserRegist | null = await window.electron.ipcRenderer.invoke("/users/create", newUser) as UserRegist | null
+            console.log(result)
 
-        console.log(result)
-
-        //setupUsers();
-        //createUser(UserRegist)
+            if (result) {
+                navigate("/signin")
+            }
+        }
+        catch (error) {
+            console.error("Error creating user:", error);
+        }
     }
 
     useEffect(() => {
@@ -118,6 +129,12 @@ const Signup: React.FC = () => {
                         <div className="col-sm-4"></div>
                         <div className="col-sm-8 d-flex justify-content-end">
                             <button type="submit" className="btn btn-primary w-100">Registar Utilizador</button>
+                        </div>
+                    </div>
+                    <div className="row mb-3">
+                        <div className="col-sm-4"></div>
+                        <div className="col-sm-8 d-flex justify-content-end">
+                            <button type="button" onClick={testDB} className="btn btn-primary w-100">Testar</button>
                         </div>
                     </div>
                 </form>

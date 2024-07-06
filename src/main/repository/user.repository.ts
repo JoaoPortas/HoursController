@@ -3,7 +3,6 @@ import { Statement } from 'sqlite3';
 
 import { IUser } from '@shared/models/interfaces/user.interface';
 import { User } from '@shared/models/user.model';
-//import { User } from '../../shared/models/user.model';
 import { UserRegist } from '@shared/models/auth.model';
 
 
@@ -60,30 +59,7 @@ export async function getAllUsers(): Promise<Array<IUser> | null> {
             resolve(users)
         })
     })
-    /*await db.each('SELECT userId, username, number, name, category, position FROM users', (err: Error | null, row: IUser) => {
-        if (err) {
-            console.log(err.message)
-        }
-
-        console.log(`User ID: ${row.userId}, UserName: ${row.username}, Name: ${row.name}`)
-    })*/
-
-    return null
 }
-
-/*export async function getAllUsers(): Promise<Array<IUser> | null> {
-    console.log("Getting all users")
-
-    await db.each('SELECT userId, name FROM users', (err: Error | null, row : {userId: number, name: string}) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log(`User ID: ${row.userId}, User Name: ${row.name}`)
-    })
-
-    return null
-    return null
-}*/
 
 /*export async function getUserById(userId:number): Promise<IUser | null> {
     /*console.log("Repository: Getting the user by ID" + userId)
