@@ -1,13 +1,13 @@
 import React, { FormEvent, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import styles from "@renderer/public/css/Login.module.css"
+//import styles from "@renderer/public/css/Login.module.css"
 import { UserRegist } from "@renderer/models/auth.model";
 //import { setupUsers } from "@renderer/repository/setup.repository";
 
 const Signup: React.FC = () => {
 
-    function createUser(event: FormEvent<HTMLFormElement>): void {
+    async function createUser(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
         const form: HTMLFormElement = event.target as HTMLFormElement;
 
@@ -19,6 +19,11 @@ const Signup: React.FC = () => {
         const workerFunction:string = (form.elements.namedItem("function") as HTMLInputElement).value
 
         const newUser: UserRegist = new UserRegist(username, password, personalId, name, category, workerFunction)
+
+        const result: string = await window.electron.ipcRenderer.invoke("/users/sendUser", newUser) as string;
+
+        console.log(result)
+
         //setupUsers();
         //createUser(UserRegist)
     }

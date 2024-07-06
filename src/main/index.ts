@@ -2,6 +2,10 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { setupUsers } from './repository/setup.repository'
+import { createUser } from './routes/user.route'
+
+setupUsers()
 
 function createWindow(): void {
   // Create the browser window.
@@ -51,6 +55,7 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+  createUser
 
   createWindow()
 
