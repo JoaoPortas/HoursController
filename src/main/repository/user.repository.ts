@@ -6,6 +6,10 @@ import { User } from '@shared/models/user.model';
 import { UserRegist } from '@shared/models/auth.model';
 
 
+function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function something(newUser: UserRegist): Promise<UserRegist> {
   console.log(newUser.username)
 
@@ -23,15 +27,17 @@ export async function createUser(newUser: UserRegist): Promise<UserRegist | null
                 newUser.name,
                 newUser.category,
                 newUser.position,
-                (err: Error) => {
+                async (err: Error) => {
                     if (err) {
                         console.error('Failed to create the user:', err)
                         stmt.finalize()
+                        await delay(5000)
                         reject(err)
                     }
                     else {
                         console.info('New user created', newUser)
                         stmt.finalize()
+                        await delay(5000)
                         resolve(newUser)
                     }
                 }
@@ -53,10 +59,40 @@ export async function getAllUsers(): Promise<Array<IUser> | null> {
 
             rows.forEach((row: IUser) => {
                 users.push(new User(row.userId, row.username, row.number, row.name, row.category, row.position))
+                console.log(`Username: ${row.username}`);
             })
 
             console.log(`Retrived ${users.length} users`);
             resolve(users)
+        })
+    })
+}
+
+export async function checkUsername(username: string): Promise<boolean> {
+    let alreadyExists = false
+    console.log("username:")
+    console.log(username)
+
+    return new Promise((resolve, reject) => {
+        const stmt : Statement = db.prepare('SELECT username FROM users WHERE username = ?')
+
+        stmt.get(
+            username,
+            (err: Error | null, row: {username: string}) => {
+                if (err) {
+                    console.error("Failed to fetching users from database: ", err.message)
+                    reject(err)
+                    return;
+                }
+
+                // Check if row is defined
+                const alreadyExists = row !== undefined;
+
+                if (alreadyExists) {
+                    console.log(row.username);
+                }
+
+                resolve(alreadyExists)
         })
     })
 }
