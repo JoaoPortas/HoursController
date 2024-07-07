@@ -3,6 +3,7 @@ import { createHashRouter } from "react-router-dom";
 import authRoutes from "./Auth/login";
 import Vite from "@renderer/views/Vite";
 import dashboardRoutes from "./Dashboard/dashboard";
+import ProtectedRoute from "@renderer/redux/components/ProtectedRoute";
 
 const routes = [
     {
@@ -19,7 +20,9 @@ const routes = [
       path: "/vite",
       element: (
         <>
-          <Vite />
+          <ProtectedRoute>
+              <Vite />
+          </ProtectedRoute>
         </>
       ),
   },
