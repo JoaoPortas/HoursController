@@ -9,7 +9,6 @@ const Dashboard: React.FC = () => {
 
     return (
         <>
-            <Navbar />
             <main>
                 <h1>Dashboard</h1>
                 {userId && <p>Logged in as user ID: {userId}</p>}
