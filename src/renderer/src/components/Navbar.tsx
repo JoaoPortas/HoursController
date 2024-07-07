@@ -51,10 +51,9 @@ const Navbar: React.FC = () => {
                 </a>
                 <ul className="dropdown-menu">
                   <li><Link className="dropdown-item" to="/hoursControl/hoursRegist">Registar Horas</Link></li>
-                  <li><a className="dropdown-item" href="#">Action</a></li>
-                  <li><a className="dropdown-item" href="#">Another action</a></li>
+                  <li><Link className="dropdown-item" to="/hoursControl/hoursRegist">Consulta de Horas</Link></li>
                   <li><hr className="dropdown-divider" /></li>
-                  <li><a className="dropdown-item" href="#">Something else here</a></li>
+                  <li><Link className="dropdown-item" to="/hoursControl/hoursRegist">Outro</Link></li>
                 </ul>
               </li>
             </ul>
@@ -74,10 +73,9 @@ const Navbar: React.FC = () => {
                 </a>
 
                 <div className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                  <a className="dropdown-item dropdown" href="#">Editar informações do documento</a>
-                  <a className="dropdown-item" href="#">Definições</a>
-                  <a className="dropdown-item" href="#"> Show profile page </a>
-                  <a className="dropdown-item" href="#">Sair</a>
+                  <Link className="dropdown-item" to="/dashboard">Gerir informações</Link>
+                  <Link className="dropdown-item" to="/dashboard">Definições</Link>
+                  <Link className="dropdown-item" to="/dashboard">Sair</Link>
                 </div>
               </li>
             </ul>
