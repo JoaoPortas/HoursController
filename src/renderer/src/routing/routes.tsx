@@ -2,6 +2,7 @@ import App from "@renderer/App";
 import { createHashRouter } from "react-router-dom";
 import authRoutes from "./Auth/login";
 import Vite from "@renderer/views/Vite";
+import dashboardRoutes from "./Dashboard/dashboard";
 
 const routes = [
     {
@@ -13,6 +14,7 @@ const routes = [
         ),
     },
     ...authRoutes,
+    ...dashboardRoutes,
     {
       path: "/vite",
       element: (
