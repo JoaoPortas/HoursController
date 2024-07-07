@@ -1,3 +1,4 @@
+import { IUserAuth } from "./interfaces/userAuth.interface";
 import { IUserRegist } from "./interfaces/userRegist.interface";
 
 export class UserRegist implements IUserRegist {
@@ -15,5 +16,15 @@ export class UserRegist implements IUserRegist {
         this.name = name
         this.category = category
         this.position = position
+    }
+}
+
+export class UserAuth implements IUserAuth {
+    username: string
+    password: string
+
+    constructor(username: string, password: string) {
+        this.username = username
+        this.password = password
     }
 }

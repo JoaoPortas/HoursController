@@ -1,16 +1,29 @@
 import { setUserSession } from "@renderer/redux/features/userSession/userSessionSlice";
-import { AppDispatch } from "@renderer/redux/store";
-import React, { FormEvent, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@renderer/redux/store";
+import { UserAuth } from "@shared/models/auth.model";
+import { IUserAuth } from "@shared/models/interfaces/userAuth.interface";
+import React, { CSSProperties, FormEvent, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 //import styles from "@renderer/public/css/Login.module.css"
 
 const Login: React.FC = () => {
+    const errorStyle: CSSProperties = {
+        backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 12 12\' width=\'12\' height=\'12\' fill=\'none\' stroke=\'%23dc3545\'%3e%3ccircle cx=\'6\' cy=\'6\' r=\'4.5\'/%3e%3cpath stroke-linejoin=\'round\' d=\'M5.8 3.6h.4L6 6.5z\'/%3e%3ccircle cx=\'6\' cy=\'8.2\' r=\'.6\' fill=\'%23dc3545\' stroke=\'none\'/%3e%3c/svg%3e")',
+        borderColor: 'var(--bs-form-invalid-border-color)',
+        paddingRight: 'calc(1.5em + .75rem)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'right calc(.375em + .1875rem) center',
+        backgroundSize: 'calc(.75em + .375rem) calc(.75em + .375rem)'
+    };
+
     const navigate: NavigateFunction = useNavigate()
     const dispatch: AppDispatch = useDispatch()
 
     const [isDisabled, setIsDisabled] = useState(false)
+    const [hasAuthError, setAuthError] = useState(false)
 
     async function authenticate(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault()
@@ -21,9 +34,33 @@ const Login: React.FC = () => {
         const username:string = (form.elements.namedItem("username") as HTMLInputElement).value
         const password:string = (form.elements.namedItem("password") as HTMLInputElement).value
 
-        dispatch(setUserSession(101))
-        //Check login and store the user id logged
-        navigate("/dashboard")
+        const authUser: IUserAuth = new UserAuth(username, password)
+
+        try {
+            const response: number | null = await toast.promise(
+                window.electron.ipcRenderer.invoke("/users/authenticateUser", authUser) as Promise<number | null>,
+                {
+                  pending: 'Porfavor aguarde...'
+                }
+            );
+
+            console.log('res: ', response)
+            if (response !== null) {
+                dispatch(setUserSession(response))
+                toast.success('Autenticação feita com sucesso')
+                navigate("/dashboard")
+            }
+            else {
+                setAuthError(true)
+                console.log("Username or password is wrong")
+                toast.error('Erro ao autenticar: o código de acesso ou o nome de utilizador está errado');
+            }
+        }
+        catch (error) {
+            console.error("Error on authenticate user:", error);
+            toast.error('Erro ao autenticar');
+            setIsDisabled(false)
+        }
 
         setIsDisabled(false)
     }
@@ -51,7 +88,7 @@ const Login: React.FC = () => {
                     <div className="row mb-3">
                         <label htmlFor="username" className="col-sm-4 col-form-label">Nome de utilizador*</label>
                         <div className="col-sm-8">
-                            <input className="form-control" id="username" name="username" required/>
+                            <input onChange={() => setAuthError(false)} style={hasAuthError ? errorStyle : {}} className="form-control" id="username" name="username" required/>
                             <div className="invalid-feedback">
                                 *Campo de preenchimento obrigatório
                             </div>
@@ -60,7 +97,7 @@ const Login: React.FC = () => {
                     <div className="row mb-3">
                         <label htmlFor="password" className="col-sm-4 col-form-label">Código de acesso*</label>
                         <div className="col-sm-8">
-                            <input type="password" className="form-control" id="password" name="password" required/>
+                            <input onChange={() => setAuthError(false)} style={hasAuthError ? errorStyle : {}} type="password" className="form-control" id="password" name="password" required/>
                             <div className="invalid-feedback">
                                 *Campo de preenchimento obrigatório
                             </div>

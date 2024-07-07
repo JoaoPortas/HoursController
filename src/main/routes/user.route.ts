@@ -1,7 +1,8 @@
 import { ipcMain } from 'electron'
 import { UserRegist } from '../../shared/models/auth.model';
-import { checkUsername, createUser, getAllUsers, something } from '../repository/user.repository';
+import { authenticateUser, checkUsername, createUser, getAllUsers, something } from '../repository/user.repository';
 import { IUser } from '../../shared/models/interfaces/user.interface';
+import { IUserAuth } from '../../shared/models/interfaces/userAuth.interface';
 
 /*
 export const createUser = ipcMain.handle('/users/sendUser', async (_event, newUser: UserRegist): Promise<UserRegist> => {
@@ -27,6 +28,11 @@ export function registUsersRoutes(routeName: string) {
 
     ipcMain.handle(routeName + '/checkUsername', async (_event, username: string): Promise<boolean> => {
         const result = await checkUsername(username)
+        return result
+    })
+
+    ipcMain.handle(routeName + '/authenticateUser', async (_event, userAuth: IUserAuth): Promise<number | null> => {
+        const result = await authenticateUser(userAuth)
         return result
     })
 }

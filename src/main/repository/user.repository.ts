@@ -4,6 +4,7 @@ import { Statement } from 'sqlite3';
 import { IUser } from '@shared/models/interfaces/user.interface';
 import { User } from '@shared/models/user.model';
 import { UserRegist } from '@shared/models/auth.model';
+import { IUserAuth } from '@shared/models/interfaces/userAuth.interface';
 
 
 function delay(ms: number) {
@@ -90,6 +91,33 @@ export async function checkUsername(username: string): Promise<boolean> {
 
                 resolve(alreadyExists)
         })
+    })
+}
+
+export async function authenticateUser(userAuth: IUserAuth): Promise<number | null> {
+    return new Promise((resolve, reject) => {
+        const stmt: Statement = db.prepare('SELECT userId FROM users WHERE username = ? AND password = ?')
+
+        stmt.get(
+            userAuth.username,
+            userAuth.password,
+            (err: Error | null, row: { userId: number }) => {
+                if (err) {
+                    console.error("Failed to signIn user from database: ", err.message)
+                    reject(err)
+                    return;
+                }
+
+                const loginFound = row !== undefined
+
+                if (loginFound) {
+                    resolve(row.userId)
+                }
+                else {
+                    resolve(null)
+                }
+            }
+        )
     })
 }
 
