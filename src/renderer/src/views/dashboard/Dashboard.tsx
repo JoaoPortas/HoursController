@@ -1,4 +1,3 @@
-import Navbar from "@renderer/components/Navbar";
 import { RootState } from "@renderer/redux/store";
 import React from "react";
 import { useSelector } from "react-redux";

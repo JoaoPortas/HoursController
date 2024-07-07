@@ -1,9 +1,9 @@
 import { setUserSession } from "@renderer/redux/features/userSession/userSessionSlice";
-import { AppDispatch, RootState } from "@renderer/redux/store";
+import { AppDispatch } from "@renderer/redux/store";
 import { UserAuth } from "@shared/models/auth.model";
 import { IUserAuth } from "@shared/models/interfaces/userAuth.interface";
 import React, { CSSProperties, FormEvent, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
