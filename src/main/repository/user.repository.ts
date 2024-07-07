@@ -69,10 +69,6 @@ export async function getAllUsers(): Promise<Array<IUser> | null> {
 }
 
 export async function checkUsername(username: string): Promise<boolean> {
-    let alreadyExists = false
-    console.log("username:")
-    console.log(username)
-
     return new Promise((resolve, reject) => {
         const stmt : Statement = db.prepare('SELECT username FROM users WHERE username = ?')
 
