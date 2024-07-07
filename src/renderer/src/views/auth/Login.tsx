@@ -1,10 +1,14 @@
+import { setUserSession } from "@renderer/redux/features/userSession/userSessionSlice";
+import { AppDispatch } from "@renderer/redux/store";
 import React, { FormEvent, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
 //import styles from "@renderer/public/css/Login.module.css"
 
 const Login: React.FC = () => {
     const navigate: NavigateFunction = useNavigate()
+    const dispatch: AppDispatch = useDispatch()
 
     const [isDisabled, setIsDisabled] = useState(false)
 
@@ -17,6 +21,8 @@ const Login: React.FC = () => {
         const username:string = (form.elements.namedItem("username") as HTMLInputElement).value
         const password:string = (form.elements.namedItem("password") as HTMLInputElement).value
 
+        dispatch(setUserSession(101))
+        //Check login and store the user id logged
         navigate("/dashboard")
 
         setIsDisabled(false)
