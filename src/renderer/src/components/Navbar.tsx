@@ -1,7 +1,9 @@
+import { Link } from "react-router-dom"
+
 const Navbar: React.FC = () => {
 
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
         <a className="navbar-brand" href="#">Offcanvas navbar</a>
         <button
@@ -32,7 +34,7 @@ const Navbar: React.FC = () => {
           <div className="offcanvas-body">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">Home</a>
+                <Link className="nav-link active" aria-current="page" to="/dashboard">Home</Link>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">Link</a>
@@ -45,9 +47,10 @@ const Navbar: React.FC = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  Dropdown
+                  Controlo de Horas
                 </a>
                 <ul className="dropdown-menu">
+                  <li><Link className="dropdown-item" to="/hoursControl/hoursRegist">Registar Horas</Link></li>
                   <li><a className="dropdown-item" href="#">Action</a></li>
                   <li><a className="dropdown-item" href="#">Another action</a></li>
                   <li><hr className="dropdown-divider" /></li>
