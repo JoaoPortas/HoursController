@@ -11,7 +11,7 @@ export const createUser = ipcMain.handle('/users/sendUser', async (_event, newUs
 })*/
 
 export function registUsersRoutes(routeName: string) {
-    ipcMain.handle(routeName + '/create', async (_event, newUser: UserRegist): Promise<UserRegist> => {
+    ipcMain.handle(routeName + '/create', async (_event, newUser: UserRegist): Promise<UserRegist | null> => {
         const result = await createUser(newUser)
         return result
     })
