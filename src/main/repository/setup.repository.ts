@@ -1,4 +1,4 @@
-import { db } from "../config/database";
+import { db } from "@main/config/database";
 
 export async function setupDatabase() {
     await setupUsers()

@@ -1,8 +1,8 @@
 import { ipcMain } from 'electron'
-import { UserRegist } from '../../shared/models/auth.model';
-import { authenticateUser, checkUsername, createUser, getAllUsers, something } from '../repository/user.repository';
-import { IUser } from '../../shared/models/interfaces/user.interface';
-import { IUserAuth } from '../../shared/models/interfaces/userAuth.interface';
+import { UserRegist } from '@shared/models/auth.model';
+import { authenticateUser, checkUsername, createUser, getAllUsers, something } from '@main/repository/user.repository';
+import { IUser } from '@shared/models/interfaces/user.interface';
+import { IUserAuth } from '@shared/models/interfaces/userAuth.interface';
 
 /*
 export const createUser = ipcMain.handle('/users/sendUser', async (_event, newUser: UserRegist): Promise<UserRegist> => {

@@ -1,4 +1,4 @@
-import { db } from '../config/database';
+import { db } from '@main/config/database';
 import { Statement } from 'sqlite3';
 
 import { IUser } from '@shared/models/interfaces/user.interface';
