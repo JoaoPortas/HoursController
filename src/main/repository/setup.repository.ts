@@ -2,6 +2,7 @@ import { db } from "@main/config/database";
 
 export async function setupDatabase() {
     await setupUsers()
+    await setupDayTypes()
 }
 
 export async function setupUsers() {
@@ -14,5 +15,14 @@ export async function setupUsers() {
           ',category TEXT' +
           ',position TEXT' +
       ')');
+  })
+}
+
+export async function setupDayTypes() {
+  await db.serialize(() => {
+      db.run('CREATE TABLE IF NOT EXISTS dayTypes (dayTypeID INTEGER PRIMARY KEY AUTOINCREMENT'
+          + ',name TEXT'
+          + ',description TEXT'
+      + ')')
   })
 }
