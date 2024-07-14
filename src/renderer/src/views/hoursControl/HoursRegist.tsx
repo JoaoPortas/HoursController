@@ -1,4 +1,5 @@
 import React, { ChangeEvent, CSSProperties, FormEvent, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const verticalCenter: CSSProperties = {
     marginTop: "auto",
@@ -9,6 +10,7 @@ const HoursRegist: React.FC = () => {
     const [wasValidated, setValidated] = useState(false)
     const [hasFormError, setFormError] = useState(false)
     const [hasHoursError, setHoursError] = useState(false)
+    const [isDisabled, setIsDisabled] = useState(false)
     //const userId = useSelector((state: RootState) => state.userSession.userId)
 
     async function registHours(event: FormEvent<HTMLFormElement>): Promise<void> {
@@ -68,7 +70,33 @@ const HoursRegist: React.FC = () => {
 
         if (hasHoursError || hasFormError) return
 
+        try {
+            /*const response: number | null = await toast.promise(
+                window.electron.ipcRenderer.invoke("/users/authenticateUser", authUser) as Promise<number | null>,
+                {
+                  pending: 'Porfavor aguarde...'
+                }
+            );*/
 
+            //console.log('res: ', response)
+            /*if (response !== null) {
+                dispatch(setUserSession(response))
+                toast.success('Autenticação feita com sucesso')
+                navigate("/dashboard")
+            }
+            else {
+                setAuthError(true)
+                console.log("Username or password is wrong")
+                toast.error('Erro ao autenticar: o código de acesso ou o nome de utilizador está errado');
+            }*/
+        }
+        catch (error) {
+            console.error("Error on authenticate user:", error);
+            toast.error('Erro ao registar as horas!');
+            setIsDisabled(false)
+        }
+
+        setIsDisabled(false)
     }
 
     async function clearError(event: ChangeEvent<HTMLInputElement>) {
@@ -207,7 +235,7 @@ const HoursRegist: React.FC = () => {
                             <div style={hasHoursError ? {display: "block"} : {}} className="invalid-feedback">
                                 *Preencha as horas na parte da manhã, da tarde ou nas duas
                             </div>
-                            <button type="submit" className="btn btn-primary w-100">Registar</button>
+                            <button type="submit" className="btn btn-primary w-100" disabled={isDisabled}>Registar</button>
                         </div>
                     </div>
                 </form>
