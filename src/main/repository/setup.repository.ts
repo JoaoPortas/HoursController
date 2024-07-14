@@ -20,12 +20,31 @@ export async function setupUsers() {
 }
 
 export async function setupDayTypes() {
-  await db.serialize(() => {
-      db.run('CREATE TABLE IF NOT EXISTS dayTypes (dayTypeID INTEGER PRIMARY KEY AUTOINCREMENT'
-          + ',name TEXT'
-          + ',description TEXT'
-      + ')')
-  })
+    await db.serialize(() => {
+        db.run('CREATE TABLE IF NOT EXISTS dayTypes (dayTypeID INTEGER PRIMARY KEY AUTOINCREMENT'
+            + ',name TEXT'
+            + ',description TEXT'
+        + ')')
+
+        db.prepare('SELECT COUNT(dayTypeID) AS total FROM dayTypes').get(
+                (err: Error | null, row: { total: number }) => {
+                    //console.log(row.total)
+
+                    if (row.total == 0) {
+                        db.prepare('INSERT INTO dayTypes(name) VALUES ("Dia de Semana")').run()
+                        db.prepare('INSERT INTO dayTypes(name) VALUES ("Fim de semana")').run()
+                        db.prepare('INSERT INTO dayTypes(name) VALUES ("Feriado")').run()
+                    }
+            }
+        )
+
+        /*db.all('SELECT dayTypeID, name, description FROM dayTypes', (err: Error, rows: { dayTypeID: number, name: string, description: string }[]) => {
+
+            rows.forEach((row: { dayTypeID: number, name: string, description: string }) => {
+                console.log(`DayTypeID: ${row.dayTypeID}\nName: ${row.name}\nDesc: ${row.description}`);
+            })
+        })*/
+    })
 }
 
 export async function setupExtraHours() {
