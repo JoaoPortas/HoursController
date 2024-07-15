@@ -20,6 +20,7 @@ const HoursRegist: React.FC = () => {
         event.preventDefault()
 
         setValidated(true)
+        setIsDisabled(true)
 
         const form: HTMLFormElement = event.target as HTMLFormElement
 
@@ -89,29 +90,24 @@ const HoursRegist: React.FC = () => {
                 afternoonStartValue === "" ? null : afternoonStartValue,
                 afternoonEndValue === "" ? null : afternoonEndValue, 1)
 
-            console.log(newExtraHours)
-            /*const response: number | null = await toast.promise(
-                window.electron.ipcRenderer.invoke("/users/authenticateUser", authUser) as Promise<number | null>,
+            const response: IBaseExtraHoursRegist | null = await toast.promise(
+                window.electron.ipcRenderer.invoke("/hoursManagement/create", newExtraHours) as Promise<IBaseExtraHoursRegist | null>,
                 {
                   pending: 'Porfavor aguarde...'
                 }
-            );*/
+            );
 
             //console.log('res: ', response)
-            /*if (response !== null) {
-                dispatch(setUserSession(response))
-                toast.success('Autenticação feita com sucesso')
-                navigate("/dashboard")
+            if (response !== null) {
+                toast.success('Horas extra registadas.')
             }
             else {
-                setAuthError(true)
-                console.log("Username or password is wrong")
-                toast.error('Erro ao autenticar: o código de acesso ou o nome de utilizador está errado');
-            }*/
+                toast.error('Erro ao registar as horas.');
+            }
         }
         catch (error) {
-            console.error("Error on authenticate user:", error);
-            toast.error('Erro ao registar as horas!');
+            console.error("Error ao registar as horas: ", error);
+            toast.error('Erro ao registar as horas.');
             setIsDisabled(false)
         }
 

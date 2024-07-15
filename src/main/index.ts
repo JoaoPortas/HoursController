@@ -8,7 +8,7 @@ import { setupDatabase } from './repository/setup.repository'
 
 //Routes import
 import { registUsersRoutes } from './routes/user.route'
-import { registHoursRoutes } from './routes/hours.route'
+import { registHoursRoutes } from './routes/extraHours.route'
 
 //Setup the requeired tables in the local database creating if doesnt exist
 setupDatabase()
@@ -65,7 +65,7 @@ app.whenReady().then(() => {
 
   //Routes regist
   registUsersRoutes("/users")
-  registHoursRoutes("/hoursManagment")
+  registHoursRoutes("/hoursManagement")
 
   createWindow()
 
