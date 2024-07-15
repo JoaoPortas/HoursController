@@ -1,5 +1,9 @@
 import React, { ChangeEvent, CSSProperties, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
+import { BaseExtraHoursRegist } from "@shared/models/hours/extraHoursRegist.model";
+import { useSelector } from "react-redux";
+import { RootState } from "@renderer/redux/store";
 
 const verticalCenter: CSSProperties = {
     marginTop: "auto",
@@ -8,10 +12,9 @@ const verticalCenter: CSSProperties = {
 
 const HoursRegist: React.FC = () => {
     const [wasValidated, setValidated] = useState(false)
-    const [hasFormError, setFormError] = useState(false)
     const [hasHoursError, setHoursError] = useState(false)
     const [isDisabled, setIsDisabled] = useState(false)
-    //const userId = useSelector((state: RootState) => state.userSession.userId)
+    const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
 
     async function registHours(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault()
@@ -32,17 +35,20 @@ const HoursRegist: React.FC = () => {
         const afternoonStartValue: string = afternoonStart.value
         const afternoonEndValue: string = afternoonEnd.value
 
+        let hasFormErrors = false
+        let hasHoursErrors = false
+
         if (dateValue.length <= 0) {
             date.classList.add('is-invalid')
-            setFormError(true)
+            hasFormErrors = true
         }
         else {
             date.classList.add('is-valid')
-            setFormError(false)
+            hasFormErrors = false
         }
 
         if ((morningStartValue.length <= 0 && morningEndValue.length <= 0) && (afternoonStartValue.length <= 0 && afternoonEndValue.length <= 0)) {
-            setHoursError(true)
+            hasHoursErrors = true
             morningStart.classList.add('is-invalid')
             morningEnd.classList.add('is-invalid')
             afternoonStart.classList.add('is-invalid')
@@ -51,26 +57,34 @@ const HoursRegist: React.FC = () => {
         else {
             if (morningStartValue.length > 0 && morningEndValue.length <= 0) {
                 morningEnd.classList.add('is-invalid')
-                setHoursError(true)
+                hasHoursErrors = true
             }
             else if (morningStartValue.length <= 0 && morningEndValue.length > 0) {
                 morningStart.classList.add('is-invalid')
-                setHoursError(true)
+                hasHoursErrors = true
             }
 
             if (afternoonStartValue.length > 0 && afternoonEndValue.length <= 0) {
                 afternoonEnd.classList.add('is-invalid')
-                setHoursError(true)
+                hasHoursErrors = true
             }
             else if (afternoonStartValue.length <= 0 && afternoonEndValue.length > 0) {
                 afternoonStart.classList.add('is-invalid')
-                setHoursError(true)
+                hasHoursErrors = true
             }
         }
 
-        if (hasHoursError || hasFormError) return
+        console.log(hasHoursErrors)
+
+        setHoursError(hasHoursErrors)
+        if (hasHoursErrors || hasFormErrors) return
 
         try {
+            if (userId === null) return
+            
+            const newExtraHours: IBaseExtraHoursRegist = new BaseExtraHoursRegist(new Date(dateValue), userId, morningStartValue, morningEndValue, afternoonStartValue, afternoonEndValue, 1)
+            
+            console.log(newExtraHours)
             /*const response: number | null = await toast.promise(
                 window.electron.ipcRenderer.invoke("/users/authenticateUser", authUser) as Promise<number | null>,
                 {
