@@ -50,15 +50,28 @@ export async function getUserExtraHours(userID:number): Promise<UserExtraHoursVi
                         return;
                     }
 
-                    let formatedDate
-
                     rows.forEach((row: IBaseExtraHoursRegist) => {
                         userHours.push(row)
-                        console.log("Hours:", row);
                     })
-
-                    resolve(null)
             })
+
+            const stmt: Statement = db.prepare('SELECT userId, number, category, position, name FROM users WHERE userId = ?');
+
+            stmt.get(userID, (err: Error | null, row : {userId: number, number: string, category: string, position: string, name: string}) => {
+                if (err) {
+                    console.error(err.message);
+                    reject(err)
+                    return
+                }
+
+                if (row !== undefined) {
+                    const userExtraHoursViewModel: UserExtraHoursViewModel = new UserExtraHoursViewModel(userID, row.number, row.category, row.position, row.name, userHours)
+                    resolve(userExtraHoursViewModel)
+                }
+                else {
+                    resolve(null)
+                }
+            });
         })
     })
 }

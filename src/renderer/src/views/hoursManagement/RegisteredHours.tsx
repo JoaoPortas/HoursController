@@ -1,7 +1,22 @@
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel"
+import { useEffect, useState } from "react";
+
+const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short' };
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('pt-PT', options).format(date);
+};
 
 const RegisteredHours: React.FC = () => {
-    window.electron.ipcRenderer.invoke("/hoursManagement/getUserExtraHours", 1) as Promise<UserExtraHoursViewModel | null>
+    const [extraHours, setExtraHours] = useState<UserExtraHoursViewModel | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data: UserExtraHoursViewModel | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserExtraHours", 1) as UserExtraHoursViewModel;
+            setExtraHours(data);
+        };
+        fetchData();
+    }, []);
 
     return (
         <>
@@ -20,7 +35,20 @@ const RegisteredHours: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                    {extraHours && extraHours.userHours.map((hour, index) => (
+                            <tr key={index}>
+                                <td>{extraHours.nip}</td>
+                                <td>{extraHours.category}</td>
+                                <td>{extraHours.position}</td>
+                                <td>{extraHours.name}</td>
+                                <td>{formatDate(hour.date)}</td>
+                                <td>{hour.morningStartTime || '-'}</td>
+                                <td>{hour.morningEndTime || '-'}</td>
+                                <td>{hour.afternoonStartTime || '-'}</td>
+                                <td>{hour.afternoonEndTime || '-'}</td>
+                            </tr>
+                        ))}
+                        {/*<tr>
                             <td>XXXXXX-X</td>
                             <td>XXXXXXXX</td>
                             <td>XXXXXXXX</td>
@@ -64,7 +92,7 @@ const RegisteredHours: React.FC = () => {
                             <td>03 Jan</td>
                             <td>08:00</td>
                             <td>09:00</td>
-                        </tr>
+                        </tr>*/}
                     </tbody>
                 </table>
             </main>
