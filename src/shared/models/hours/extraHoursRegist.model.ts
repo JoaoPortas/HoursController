@@ -1,7 +1,7 @@
 import { IBaseExtraHoursRegist } from "./interfaces/hoursRegist.interface";
 
 export class BaseExtraHoursRegist implements IBaseExtraHoursRegist {
-    date: Date;
+    date: string;
     userID: number;
     morningStartTime: string | null;
     morningEndTime: string | null;
@@ -9,7 +9,7 @@ export class BaseExtraHoursRegist implements IBaseExtraHoursRegist {
     afternoonEndTime: string | null;
     dayTypeID: number;
 
-    constructor(date: Date, userID: number, morningStartTime: string | null,
+    constructor(date: string, userID: number, morningStartTime: string | null,
         morningEndTime: string | null, afternoonStartTime: string | null, afternoonEndTime: string | null,
         dayTypeID: number
     ) {

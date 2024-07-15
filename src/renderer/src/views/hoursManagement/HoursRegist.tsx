@@ -83,7 +83,7 @@ const HoursRegist: React.FC = () => {
         try {
             if (userId === null) return
 
-            const newExtraHours: IBaseExtraHoursRegist = new BaseExtraHoursRegist(new Date(dateValue),
+            const newExtraHours: IBaseExtraHoursRegist = new BaseExtraHoursRegist(dateValue,
                 userId,
                 morningStartValue === "" ? null : morningStartValue,
                 morningEndValue === "" ? null : morningEndValue,

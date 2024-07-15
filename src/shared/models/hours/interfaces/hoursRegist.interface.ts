@@ -1,5 +1,5 @@
 export interface IBaseExtraHoursRegist {
-    date: Date,
+    date: string,
     userID: number,
     morningStartTime: string | null,
     morningEndTime?: string | null,
