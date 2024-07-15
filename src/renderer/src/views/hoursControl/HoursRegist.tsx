@@ -81,9 +81,14 @@ const HoursRegist: React.FC = () => {
 
         try {
             if (userId === null) return
-            
-            const newExtraHours: IBaseExtraHoursRegist = new BaseExtraHoursRegist(new Date(dateValue), userId, morningStartValue, morningEndValue, afternoonStartValue, afternoonEndValue, 1)
-            
+
+            const newExtraHours: IBaseExtraHoursRegist = new BaseExtraHoursRegist(new Date(dateValue),
+                userId,
+                morningStartValue === "" ? null : morningStartValue,
+                morningEndValue === "" ? null : morningEndValue,
+                afternoonStartValue === "" ? null : afternoonStartValue,
+                afternoonEndValue === "" ? null : afternoonEndValue, 1)
+
             console.log(newExtraHours)
             /*const response: number | null = await toast.promise(
                 window.electron.ipcRenderer.invoke("/users/authenticateUser", authUser) as Promise<number | null>,

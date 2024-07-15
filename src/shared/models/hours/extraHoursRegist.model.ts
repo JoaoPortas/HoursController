@@ -3,14 +3,14 @@ import { IBaseExtraHoursRegist } from "./interfaces/hoursRegist.interface";
 export class BaseExtraHoursRegist implements IBaseExtraHoursRegist {
     date: Date;
     userID: number;
-    morningStartTime?: string;
-    morningEndTime?: string;
-    afternoonStartTime?: string;
-    afternoonEndTime?: string;
+    morningStartTime: string | null;
+    morningEndTime: string | null;
+    afternoonStartTime: string | null;
+    afternoonEndTime: string | null;
     dayTypeID: number;
 
-    constructor(date: Date, userID: number, morningStartTime: string,
-        morningEndTime: string, afternoonStartTime: string, afternoonEndTime: string,
+    constructor(date: Date, userID: number, morningStartTime: string | null,
+        morningEndTime: string | null, afternoonStartTime: string | null, afternoonEndTime: string | null,
         dayTypeID: number
     ) {
         this.date = date;
