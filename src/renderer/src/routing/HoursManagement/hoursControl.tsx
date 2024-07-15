@@ -1,4 +1,4 @@
-import HoursRegist from "@renderer/views/hoursControl/HoursRegist";
+import HoursRegist from "@renderer/views/hoursManagement/HoursRegist";
 
 const hoursControlRoutes = [
   {

@@ -5,7 +5,7 @@ import dashboardRoutes from "./Dashboard/dashboard";
 import otherRoutes from "./otherRoutes";
 import ProtectedRoute from "@renderer/redux/components/ProtectedRoute";
 import Navbar from "@renderer/components/Navbar";
-import hoursControlRoutes from "./HoursControl/hoursControl";
+import hoursControlRoutes from "./HoursManagement/hoursControl";
 
 // Wrap each element with ProtectedRoute and Navbar
 const withProtectedRouteAndNavbar = (element: React.ReactNode) => (
