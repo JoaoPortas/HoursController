@@ -62,7 +62,7 @@ export async function updateExtraHoursRegist(newExtraHours: IBaseExtraHoursRegis
     })
 }
 
-export async function getUserExtraHours(userID:number): Promise<UserExtraHoursViewModel | null> {
+export async function getUserAllExtraHours(userID:number): Promise<UserExtraHoursViewModel | null> {
     return new Promise((resolve, reject) => {
         const userHours: IBaseExtraHoursRegist[] = []
 
@@ -88,6 +88,55 @@ export async function getUserExtraHours(userID:number): Promise<UserExtraHoursVi
             const stmt: Statement = db.prepare('SELECT userId, number, category, position, name FROM users WHERE userId = ?');
 
             stmt.get(userID, (err: Error | null, row : {userId: number, number: string, category: string, position: string, name: string}) => {
+                if (err) {
+                    console.error(err.message);
+                    reject(err)
+                    return
+                }
+
+                if (row !== undefined) {
+                    const userExtraHoursViewModel: UserExtraHoursViewModel = new UserExtraHoursViewModel(userID, row.number, row.category, row.position, row.name, userHours)
+                    resolve(userExtraHoursViewModel)
+                }
+                else {
+                    resolve(null)
+                }
+            });
+        })
+    })
+}
+
+export async function getUserAllExtraHoursByYearAndMonth(userID:number, year: string, month: string): Promise<UserExtraHoursViewModel | null> {
+    return new Promise((resolve, reject) => {
+        const userHours: IBaseExtraHoursRegist[] = []
+
+        db.serialize(() => {
+            const sql: string = `
+                SELECT date, userID, morningStartTime, morningEndTime, afternoonStartTime, afternoonEndTime, strftime('%Y', date) AS 'Year', strftime('%m', date) AS 'Month'
+                FROM extraHours
+                WHERE userID = ? AND Month = ? AND Year = ? ORDER BY date DESC
+            `
+
+            const stmt: Statement = db.prepare(sql);
+
+            stmt.all(userID,
+                month,
+                year,
+                (err: Error | null, rows : Array<IBaseExtraHoursRegist>) => {
+                    if (err) {
+                        console.error("Failed to fetching extra hours from database: ", err.message)
+                        reject(err)
+                        return;
+                    }
+
+                    rows.forEach((row: IBaseExtraHoursRegist) => {
+                        userHours.push(row)
+                    })
+            });
+
+            const stmtUser: Statement = db.prepare('SELECT userId, number, category, position, name FROM users WHERE userId = ?');
+
+            stmtUser.get(userID, (err: Error | null, row : {userId: number, number: string, category: string, position: string, name: string}) => {
                 if (err) {
                     console.error(err.message);
                     reject(err)

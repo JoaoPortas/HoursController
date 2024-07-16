@@ -1,6 +1,8 @@
+import { RootState } from "@renderer/redux/store";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel"
-import { Fragment, useEffect, useState } from "react";
+import { FormEvent, Fragment, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -11,13 +13,30 @@ const formatDate = (dateString: string): string => {
 };
 
 const RegisteredHours: React.FC = () => {
+    const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
+
     const [extraHours, setExtraHours] = useState<UserExtraHoursViewModel | null>(null);
     const [years, setYears] = useState<number[]>([]);
-    const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth() + 1);
+    const [currentMonth, _setCurrentMonth] = useState<string>(
+        (new Date().getMonth() + 1).toString().padStart(2, '0')
+    );
+
+    async function researchHours(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+
+        const form: HTMLFormElement = event.target as HTMLFormElement
+
+        const yearElement: HTMLInputElement = form.elements.namedItem("year") as HTMLInputElement
+        const monthElement: HTMLInputElement = form.elements.namedItem("month") as HTMLInputElement
+
+        const data: UserExtraHoursViewModel | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserAllExtraHoursByYearAndMonth", userId, yearElement.value, monthElement.value) as UserExtraHoursViewModel;
+        setExtraHours(data);
+    }
 
     useEffect(() => {
         const fetchData = async () => {
-            const data: UserExtraHoursViewModel | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserExtraHours", 1) as UserExtraHoursViewModel;
+            //const data: UserExtraHoursViewModel | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserAllExtraHours", 1) as UserExtraHoursViewModel;
+            const data: UserExtraHoursViewModel | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserAllExtraHoursByYearAndMonth", userId, new Date().getFullYear().toString(), currentMonth) as UserExtraHoursViewModel;
             setExtraHours(data);
         };
         fetchData();
@@ -35,10 +54,10 @@ const RegisteredHours: React.FC = () => {
         <>
             <main>
                 <h1>Horas registadas</h1>
-                <form style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
+                <form onSubmit={researchHours} style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
                     <div className="col-12">
                         <label className="visually-hidden">Ano</label>
-                        <select className="form-select" id="year">
+                        <select className="form-select" id="year" name="year">
                             <option disabled>Ano</option>
                             {years.map((year) => (
                                 <option key={year} value={year}>
@@ -50,17 +69,17 @@ const RegisteredHours: React.FC = () => {
 
                     <div className="col-12">
                         <label className="visually-hidden">Preference</label>
-                        <select className="form-select" id="month" defaultValue={currentMonth}>
+                        <select className="form-select" id="month" name="month" defaultValue={currentMonth}>
                             <option disabled>Mês</option>
-                            <option value="1">Janeiro</option>
-                            <option value="2">Fevereiro</option>
-                            <option value="3">Março</option>
-                            <option value="4">Abril</option>
-                            <option value="5">Maio</option>
-                            <option value="6">Junho</option>
-                            <option value="7">Julho</option>
-                            <option value="8">Agosto</option>
-                            <option value="9">Setembro</option>
+                            <option value="01">Janeiro</option>
+                            <option value="02">Fevereiro</option>
+                            <option value="03">Março</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Maio</option>
+                            <option value="06">Junho</option>
+                            <option value="07">Julho</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Setembro</option>
                             <option value="10">Outubro</option>
                             <option value="11">Novembro</option>
                             <option value="12">Dezembro</option>
@@ -68,7 +87,7 @@ const RegisteredHours: React.FC = () => {
                     </div>
 
                     <div className="col-12">
-                        <button type="button" className="btn btn-primary">Procurar</button>
+                        <button type="submit" className="btn btn-primary">Procurar</button>
                     </div>
                 </form>
                 <table className="table table-striped">
