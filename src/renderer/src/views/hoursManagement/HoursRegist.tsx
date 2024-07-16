@@ -14,6 +14,7 @@ const HoursRegist: React.FC = () => {
     const [wasValidated, setValidated] = useState(false)
     const [hasHoursError, setHoursError] = useState(false)
     const [isDisabled, setIsDisabled] = useState(false)
+    const [isUpdate, setUpdate] = useState(false)
     const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
 
     const [morningStartRegisted, setMorningStartRegisted] = useState<string | null>(null)
@@ -80,40 +81,52 @@ const HoursRegist: React.FC = () => {
             }
         }
 
-        console.log(hasHoursErrors)
-
         setHoursError(hasHoursErrors)
-        if (hasHoursErrors || hasFormErrors) return
+        if (hasHoursErrors || hasFormErrors) {
+            setIsDisabled(false)
+            return
+        }
 
-        try {
-            if (userId === null) return
+        //If is not update then insert
+        if (!isUpdate) {
+            try {
+                if (userId === null) return
 
-            const newExtraHours: IBaseExtraHoursRegist = new BaseExtraHoursRegist(dateValue,
-                userId,
-                morningStartValue === "" ? null : morningStartValue,
-                morningEndValue === "" ? null : morningEndValue,
-                afternoonStartValue === "" ? null : afternoonStartValue,
-                afternoonEndValue === "" ? null : afternoonEndValue, 1)
+                const newExtraHours: IBaseExtraHoursRegist = new BaseExtraHoursRegist(dateValue,
+                    userId,
+                    morningStartValue === "" ? null : morningStartValue,
+                    morningEndValue === "" ? null : morningEndValue,
+                    afternoonStartValue === "" ? null : afternoonStartValue,
+                    afternoonEndValue === "" ? null : afternoonEndValue, 1)
 
-            const response: IBaseExtraHoursRegist | null = await toast.promise(
-                window.electron.ipcRenderer.invoke("/hoursManagement/create", newExtraHours) as Promise<IBaseExtraHoursRegist | null>,
-                {
-                  pending: 'Porfavor aguarde...'
+                const response: IBaseExtraHoursRegist | null = await toast.promise(
+                    window.electron.ipcRenderer.invoke("/hoursManagement/create", newExtraHours) as Promise<IBaseExtraHoursRegist | null>,
+                    {
+                      pending: 'Porfavor aguarde...'
+                    }
+                );
+
+                //console.log('res: ', response)
+                if (response !== null) {
+                    toast.success('Horas extra registadas.')
+                    setMorningStartRegisted(morningStartValue)
+                    setMorningEndRegisted(morningEndValue)
+                    setAfternoonStartRegisted(afternoonStartValue)
+                    setAfternoonEndRegisted(afternoonEndValue)
+                    setUpdate(true)
                 }
-            );
-
-            //console.log('res: ', response)
-            if (response !== null) {
-                toast.success('Horas extra registadas.')
+                else {
+                    toast.error('Erro ao registar as horas.');
+                }
             }
-            else {
+            catch (error) {
+                console.error("Error ao registar as horas: ", error);
                 toast.error('Erro ao registar as horas.');
+                setIsDisabled(false)
             }
         }
-        catch (error) {
-            console.error("Error ao registar as horas: ", error);
-            toast.error('Erro ao registar as horas.');
-            setIsDisabled(false)
+        else {
+            //Is update
         }
 
         setIsDisabled(false)
@@ -132,6 +145,7 @@ const HoursRegist: React.FC = () => {
             setMorningEndRegisted(null)
             setAfternoonStartRegisted(null)
             setAfternoonEndRegisted(null)
+            setUpdate(false)
 
             return
         }
@@ -140,6 +154,7 @@ const HoursRegist: React.FC = () => {
         if (registedHours.morningEndTime) setMorningEndRegisted(registedHours.morningStartTime)
         if (registedHours.afternoonStartTime) setAfternoonStartRegisted(registedHours.afternoonStartTime)
         if (registedHours.afternoonEndTime) setAfternoonEndRegisted(registedHours.afternoonEndTime)
+        setUpdate(true)
     }
 
     async function handleDateChange(event) {
@@ -283,7 +298,7 @@ const HoursRegist: React.FC = () => {
                             <div style={hasHoursError ? {display: "block"} : {}} className="invalid-feedback">
                                 *Preencha as horas na parte da manhã, da tarde ou nas duas
                             </div>
-                            <button type="submit" className="btn btn-primary w-100" disabled={isDisabled}>Registar</button>
+                            <button type="submit" className="btn btn-primary w-100" disabled={isDisabled}>{isUpdate ? 'Atualizar horas' : 'Registar'}</button>
                         </div>
                     </div>
                 </form>
