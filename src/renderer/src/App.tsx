@@ -1,17 +1,19 @@
 import React from 'react'
 import { Link } from "react-router-dom";
+import Login from './views/auth/Login';
 
 const App: React.FC = () => {
     return (
         <>
-            <h1>Hello world</h1>
+            <Login />
+            {/*<h1>Hello world</h1>
             <Link to="/signin">
                 login
             </Link>
             <br />
             <Link to="/vite">
                 Vite page
-            </Link>
+            </Link>*/}
         </>
     )
 }
