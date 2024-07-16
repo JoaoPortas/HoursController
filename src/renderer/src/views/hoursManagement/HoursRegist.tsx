@@ -178,6 +178,12 @@ const HoursRegist: React.FC = () => {
         }
     }
 
+    function getTodayDate(): string {
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        return formattedDate
+    }
+
     useEffect(() => {
         const morningStart: HTMLInputElement = document.getElementById("morningStart") as HTMLInputElement
         const morningEnd: HTMLInputElement = document.getElementById("morningEnd") as HTMLInputElement
@@ -256,7 +262,7 @@ const HoursRegist: React.FC = () => {
                         <label style={verticalCenter} htmlFor="date" className="col-sm-4 col-form-label">Data</label>
                         <div className="col-sm-8">
                             {/*<div className="form-text" id="basic-addon4">Último dia registado: 08/07/2024</div>*/}
-                            <input onChange={handleDateChange} type="date" className="form-control" id="date" name="date" required/>
+                            <input onChange={handleDateChange} type="date" className="form-control" id="date" name="date" value={getTodayDate()} required/>
                             <div className="invalid-feedback">
                                 *Campo de preenchimento obrigatório
                             </div>
