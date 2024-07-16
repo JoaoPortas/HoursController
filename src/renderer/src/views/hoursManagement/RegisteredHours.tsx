@@ -30,9 +30,9 @@ const RegisteredHours: React.FC = () => {
                         <label className="visually-hidden">Ano</label>
                         <select className="form-select" id="year">
                             <option selected>Ano</option>
-                            <option value="1">2024</option>
-                            <option value="2">2023</option>
-                            <option value="3">2022</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
                         </select>
                     </div>
 
