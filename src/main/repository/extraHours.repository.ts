@@ -32,6 +32,36 @@ export async function createExtraHoursRegist(newExtraHours: IBaseExtraHoursRegis
     })
 }
 
+export async function updateExtraHoursRegist(newExtraHours: IBaseExtraHoursRegist): Promise<IBaseExtraHoursRegist | null> {
+    return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            const stmt: Statement = db.prepare("UPDATE extraHours SET morningStartTime = ?, morningEndTime = ?, afternoonStartTime = ?, afternoonEndTime = ?, dayTypeID = ? WHERE date = ? AND userID = ?")
+
+            stmt.run(
+                newExtraHours.morningStartTime,
+                newExtraHours.morningEndTime,
+                newExtraHours.afternoonStartTime,
+                newExtraHours.afternoonEndTime,
+                newExtraHours.dayTypeID,
+                newExtraHours.date,
+                newExtraHours.userID,
+                async (err: Error) => {
+                    if (err) {
+                        console.error('Failed updating the extra hours for user:', err)
+                        stmt.finalize()
+                        reject(err)
+                    }
+                    else {
+                        console.info('Extra hours updated for the user:', newExtraHours)
+                        stmt.finalize()
+                        resolve(newExtraHours)
+                    }
+                }
+            )
+        })
+    })
+}
+
 export async function getUserExtraHours(userID:number): Promise<UserExtraHoursViewModel | null> {
     return new Promise((resolve, reject) => {
         const userHours: IBaseExtraHoursRegist[] = []

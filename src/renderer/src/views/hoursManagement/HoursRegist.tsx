@@ -127,6 +127,41 @@ const HoursRegist: React.FC = () => {
         }
         else {
             //Is update
+            try {
+                if (userId === null) return
+
+                const newExtraHours: IBaseExtraHoursRegist = new BaseExtraHoursRegist(dateValue,
+                    userId,
+                    morningStartValue === "" ? null : morningStartValue,
+                    morningEndValue === "" ? null : morningEndValue,
+                    afternoonStartValue === "" ? null : afternoonStartValue,
+                    afternoonEndValue === "" ? null : afternoonEndValue, 1)
+
+                const response: IBaseExtraHoursRegist | null = await toast.promise(
+                    window.electron.ipcRenderer.invoke("/hoursManagement/update", newExtraHours) as Promise<IBaseExtraHoursRegist | null>,
+                    {
+                      pending: 'Porfavor aguarde...'
+                    }
+                );
+
+                //console.log('res: ', response)
+                if (response !== null) {
+                    toast.success('Horas extra atualizadas.')
+                    setMorningStartRegisted(morningStartValue)
+                    setMorningEndRegisted(morningEndValue)
+                    setAfternoonStartRegisted(afternoonStartValue)
+                    setAfternoonEndRegisted(afternoonEndValue)
+                    setUpdate(true)
+                }
+                else {
+                    toast.error('Erro ao atualizar as horas.');
+                }
+            }
+            catch (error) {
+                console.error("Error ao atualizar as horas: ", error);
+                toast.error('Erro ao atualizar as horas.');
+                setIsDisabled(false)
+            }
         }
 
         setIsDisabled(false)
@@ -262,7 +297,7 @@ const HoursRegist: React.FC = () => {
                         <label style={verticalCenter} htmlFor="date" className="col-sm-4 col-form-label">Data</label>
                         <div className="col-sm-8">
                             {/*<div className="form-text" id="basic-addon4">Último dia registado: 08/07/2024</div>*/}
-                            <input onChange={handleDateChange} type="date" className="form-control" id="date" name="date" value={getTodayDate()} required/>
+                            <input onChange={handleDateChange} type="date" className="form-control" id="date" name="date" required/>
                             <div className="invalid-feedback">
                                 *Campo de preenchimento obrigatório
                             </div>
