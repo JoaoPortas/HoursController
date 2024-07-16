@@ -12,6 +12,8 @@ const formatDate = (dateString: string): string => {
 
 const RegisteredHours: React.FC = () => {
     const [extraHours, setExtraHours] = useState<UserExtraHoursViewModel | null>(null);
+    const [years, setYears] = useState<number[]>([]);
+    const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth() + 1);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -19,6 +21,14 @@ const RegisteredHours: React.FC = () => {
             setExtraHours(data);
         };
         fetchData();
+
+        // Generate years from 2023 to current year
+        const currentYear = new Date().getFullYear();
+        const yearsArray: number[] = [];
+        for (let year = currentYear; year >= 2023; year--) {
+            yearsArray.push(year);
+        }
+        setYears(yearsArray);
     }, []);
 
     return (
@@ -29,17 +39,19 @@ const RegisteredHours: React.FC = () => {
                     <div className="col-12">
                         <label className="visually-hidden">Ano</label>
                         <select className="form-select" id="year">
-                            <option selected>Ano</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
+                            <option disabled>Ano</option>
+                            {years.map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
                     <div className="col-12">
                         <label className="visually-hidden">Preference</label>
-                        <select className="form-select" id="month">
-                            <option selected>Mês</option>
+                        <select className="form-select" id="month" defaultValue={currentMonth}>
+                            <option disabled>Mês</option>
                             <option value="1">Janeiro</option>
                             <option value="2">Fevereiro</option>
                             <option value="3">Março</option>
