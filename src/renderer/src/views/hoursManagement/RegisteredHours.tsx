@@ -25,6 +25,40 @@ const RegisteredHours: React.FC = () => {
         <>
             <main>
                 <h1>Horas registadas</h1>
+                <form style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
+                    <div className="col-12">
+                        <label className="visually-hidden">Ano</label>
+                        <select className="form-select" id="year">
+                            <option selected>Ano</option>
+                            <option value="1">2024</option>
+                            <option value="2">2023</option>
+                            <option value="3">2022</option>
+                        </select>
+                    </div>
+
+                    <div className="col-12">
+                        <label className="visually-hidden">Preference</label>
+                        <select className="form-select" id="month">
+                            <option selected>Mês</option>
+                            <option value="1">Janeiro</option>
+                            <option value="2">Fevereiro</option>
+                            <option value="3">Março</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Maio</option>
+                            <option value="6">Junho</option>
+                            <option value="7">Julho</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                        </select>
+                    </div>
+
+                    <div className="col-12">
+                        <button type="button" className="btn btn-primary">Procurar</button>
+                    </div>
+                </form>
                 <table className="table table-striped">
                     <thead>
                         <tr>

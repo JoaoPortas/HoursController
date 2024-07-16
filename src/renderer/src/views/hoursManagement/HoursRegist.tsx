@@ -16,6 +16,11 @@ const HoursRegist: React.FC = () => {
     const [isDisabled, setIsDisabled] = useState(false)
     const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
 
+    const [morningStartRegisted, setMorningStartRegisted] = useState<string | null>(null)
+    const [morningEndRegisted, setMorningEndRegisted] = useState<string | null>(null)
+    const [afternoonStartRegisted, setAfternoonStartRegisted] = useState<string | null>(null)
+    const [afternoonEndRegisted, setAfternoonEndRegisted] = useState<string | null>(null)
+
     async function registHours(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault()
 
@@ -114,6 +119,34 @@ const HoursRegist: React.FC = () => {
         setIsDisabled(false)
     }
 
+    async function getRegistedHours(event: ChangeEvent<HTMLInputElement>) {
+        const input: HTMLInputElement = event.target as HTMLInputElement
+        const value = input.value
+        const registedHours: IBaseExtraHoursRegist | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserExtraHoursByDate", userId, value) as IBaseExtraHoursRegist | null
+        //setMorningStartRegisted("00:00")
+        console.log(value)
+        console.log(registedHours)
+
+        if (!registedHours) {
+            setMorningStartRegisted(null)
+            setMorningEndRegisted(null)
+            setAfternoonStartRegisted(null)
+            setAfternoonEndRegisted(null)
+
+            return
+        }
+
+        if (registedHours.morningStartTime) setMorningStartRegisted(registedHours.morningStartTime)
+        if (registedHours.morningEndTime) setMorningEndRegisted(registedHours.morningStartTime)
+        if (registedHours.afternoonStartTime) setAfternoonStartRegisted(registedHours.afternoonStartTime)
+        if (registedHours.afternoonEndTime) setAfternoonEndRegisted(registedHours.afternoonEndTime)
+    }
+
+    async function handleDateChange(event) {
+        clearError(event)
+        getRegistedHours(event)
+    }
+
     async function clearError(event: ChangeEvent<HTMLInputElement>) {
         const input: HTMLInputElement = event.target as HTMLInputElement
         const value = input.value
@@ -207,8 +240,8 @@ const HoursRegist: React.FC = () => {
                     <div className="row mb-3">
                         <label style={verticalCenter} htmlFor="date" className="col-sm-4 col-form-label">Data</label>
                         <div className="col-sm-8">
-                            <div className="form-text" id="basic-addon4">Último dia registado: 08/07/2024</div>
-                            <input onChange={clearError} type="date" className="form-control" id="date" name="date" required/>
+                            {/*<div className="form-text" id="basic-addon4">Último dia registado: 08/07/2024</div>*/}
+                            <input onChange={handleDateChange} type="date" className="form-control" id="date" name="date" required/>
                             <div className="invalid-feedback">
                                 *Campo de preenchimento obrigatório
                             </div>
@@ -218,14 +251,14 @@ const HoursRegist: React.FC = () => {
                     <div className="row mb-3">
                         <label style={verticalCenter} htmlFor="morningStart" className="col-sm-4 col-form-label">Início</label>
                         <div className="col-sm-8">
-                            <div className="form-text">Horário guardado: 08:00</div>
+                            <div className="form-text">Horário guardado: {morningStartRegisted ? morningStartRegisted : 'N/A'}</div>
                             <input type="time" className="form-control" id="morningStart" name="morningStart"/>
                         </div>
                     </div>
                     <div className="row mb-3">
                         <label style={verticalCenter} htmlFor="morningEnd" className="col-sm-4 col-form-label">Fim</label>
                         <div className="col-sm-8">
-                            <div className="form-text">Horário guardado: 09:00</div>
+                            <div className="form-text">Horário guardado: {morningEndRegisted ? morningEndRegisted : 'N/A'}</div>
                             <input type="time" className="form-control" id="morningEnd" name="morningEnd"/>
                         </div>
                     </div>
@@ -233,14 +266,14 @@ const HoursRegist: React.FC = () => {
                     <div className="row mb-3">
                         <label style={verticalCenter} htmlFor="afternoonStart" className="col-sm-4 col-form-label">Início</label>
                         <div className="col-sm-8">
-                            <div className="form-text">Horário guardado: 17:00</div>
+                            <div className="form-text">Horário guardado: {afternoonStartRegisted ? afternoonStartRegisted : 'N/A'}</div>
                             <input type="time" className="form-control" id="afternoonStart" name="afternoonStart"/>
                         </div>
                     </div>
                     <div className="row mb-3">
                         <label style={verticalCenter} htmlFor="afternoonEnd" className="col-sm-4 col-form-label">Fim</label>
                         <div className="col-sm-8">
-                            <div className="form-text">Horário guardado: 19:00</div>
+                            <div className="form-text">Horário guardado: {afternoonEndRegisted ? afternoonEndRegisted : 'N/A'}</div>
                             <input type="time" className="form-control" id="afternoonEnd" name="afternoonEnd"/>
                         </div>
                     </div>

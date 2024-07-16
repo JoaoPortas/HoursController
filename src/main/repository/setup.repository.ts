@@ -4,6 +4,7 @@ export async function setupDatabase() {
     await setupUsers()
     await setupDayTypes()
     await setupExtraHours()
+    //await populate()
 }
 
 export async function setupUsers() {
@@ -49,7 +50,8 @@ export async function setupDayTypes() {
 
 export async function setupExtraHours() {
   await db.serialize(() => {
-      db.run('CREATE TABLE IF NOT EXISTS extraHours (date TEXT'
+      db.run('CREATE TABLE IF NOT EXISTS extraHours (extraHourID INTEGER PRIMARY KEY AUTOINCREMENT'
+          + ',date TEXT'
           + ',userID INTEGER'
           + ',morningStartTime TEXT'
           + ',morningEndTime TEXT'
@@ -58,7 +60,11 @@ export async function setupExtraHours() {
           + ',dayTypeID INTEGER'
           + ',FOREIGN KEY(userID) REFERENCES users(userId)'
           + ',FOREIGN KEY(dayTypeID) REFERENCES dayTypes(dayTypeID)'
-          + ',PRIMARY KEY(date, userID)'
+          + ',UNIQUE(date, userID)'
       + ')')
   })
+}
+
+export async function populate() {
+    db.prepare('INSERT INTO users(username, password, number, name, category, position) VALUES ("admin", "123", "XXXXXX-X", "Test Adm User", "XXXXXXXX", "XXXXXXXX")').run()
 }

@@ -39,7 +39,7 @@ export async function getUserExtraHours(userID:number): Promise<UserExtraHoursVi
         db.serialize(() => {
             const sql: string = `
                 SELECT date, userID, morningStartTime, morningEndTime, afternoonStartTime, afternoonEndTime
-                FROM extraHours
+                FROM extraHours ORDER BY date DESC
             `
 
             db.all(sql,
@@ -73,5 +73,26 @@ export async function getUserExtraHours(userID:number): Promise<UserExtraHoursVi
                 }
             });
         })
+    })
+}
+
+export async function getUserExtraHoursByDate(userID: number, date: string): Promise<IBaseExtraHoursRegist | null> {
+    const stmt: Statement = db.prepare('SELECT date, userID, morningStartTime, morningEndTime, afternoonStartTime, afternoonEndTime FROM extraHours WHERE userID = ? AND date = ?');
+
+    return new Promise<IBaseExtraHoursRegist | null>((resolve, reject) => {
+        stmt.get(userID, date, (err: Error | null, row : IBaseExtraHoursRegist) => {
+            if (err) {
+                console.error(err.message);
+                reject(err)
+                return
+            }
+
+            if (row !== undefined) {
+                resolve(row)
+            }
+            else {
+                resolve(null)
+            }
+        });
     })
 }
