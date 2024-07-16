@@ -1,10 +1,13 @@
+import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel"
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 const formatDate = (dateString: string): string => {
-    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short' };
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('pt-PT', options).format(date);
+    const day = date.getDate().toString().padStart(2, '0');
+    const monthShortNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const month = monthShortNames[date.getMonth()];
+    return `${day} ${month}`;
 };
 
 const RegisteredHours: React.FC = () => {
@@ -35,19 +38,32 @@ const RegisteredHours: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                    {extraHours && extraHours.userHours.map((hour, index) => (
-                            <tr key={index}>
-                                <td>{extraHours.nip}</td>
-                                <td>{extraHours.category}</td>
-                                <td>{extraHours.position}</td>
-                                <td>{extraHours.name}</td>
-                                <td>{formatDate(hour.date)}</td>
-                                <td>{hour.morningStartTime || '-'}</td>
-                                <td>{hour.morningEndTime || '-'}</td>
-                                <td>{hour.afternoonStartTime || '-'}</td>
-                                <td>{hour.afternoonEndTime || '-'}</td>
-                            </tr>
-                        ))}
+                    {extraHours && extraHours.userHours.map((hour: IBaseExtraHoursRegist, index) => (
+                        <Fragment key={index}>
+                            {hour.morningStartTime && (
+                                <tr>
+                                    <td>{extraHours.nip}</td>
+                                    <td>{extraHours.category}</td>
+                                    <td>{extraHours.position}</td>
+                                    <td>{extraHours.name}</td>
+                                    <td>{formatDate(hour.date)}</td>
+                                    <td>{hour.morningStartTime || '-'}</td>
+                                    <td>{hour.morningEndTime || '-'}</td>
+                                </tr>
+                            )}
+                            {hour.afternoonStartTime && (
+                                <tr>
+                                    <td>{extraHours.nip}</td>
+                                    <td>{extraHours.category}</td>
+                                    <td>{extraHours.position}</td>
+                                    <td>{extraHours.name}</td>
+                                    <td>{formatDate(hour.date)}</td>
+                                    <td>{hour.afternoonStartTime || '-'}</td>
+                                    <td>{hour.afternoonEndTime || '-'}</td>
+                                </tr>
+                            )}
+                        </Fragment>
+                    ))}
                         {/*<tr>
                             <td>XXXXXX-X</td>
                             <td>XXXXXXXX</td>
