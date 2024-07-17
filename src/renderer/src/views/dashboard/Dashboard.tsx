@@ -11,7 +11,7 @@ const Dashboard: React.FC = () => {
     );
 
     async function test() {
-        const data: IExtraHoursResume[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserAllExtraHoursResumeByYearAndMonth", 1, "2024", "06") as IExtraHoursResume[];
+        const data: IExtraHoursResume[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserAllExtraHoursResumeByYearAndMonth", userId, new Date().getFullYear().toString(), currentMonth) as IExtraHoursResume[];
         console.log(data)
     }
 
