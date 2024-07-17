@@ -46,7 +46,7 @@ const Login: React.FC = () => {
 
             console.log('res: ', response)
             if (response !== null) {
-                dispatch(setUserSession(response))
+                dispatch(setUserSession({userId: response, name: username}))
                 toast.success('Autenticação feita com sucesso')
                 navigate("/dashboard")
             }
@@ -79,7 +79,7 @@ const Login: React.FC = () => {
     }, []);
 
     async function forceLogin() {
-        dispatch(setUserSession(1))
+        dispatch(setUserSession({userId: 1, name: "Pedro Alves"}))
         toast.warning('Autenticação forçada')
         navigate("/dashboard")
     }
