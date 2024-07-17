@@ -5,6 +5,8 @@ export async function setupDatabase() {
     await setupDayTypes()
     await setupExtraHours()
     //await populate()
+
+    await createViews()
 }
 
 export async function setupUsers() {
@@ -63,6 +65,39 @@ export async function setupExtraHours() {
           + ',UNIQUE(date, userID)'
       + ')')
   })
+}
+
+export async function createViews() {
+    db.run(`CREATE VIEW IF NOT EXISTS vExtraHoursResume
+            AS
+            SELECT
+                extraHourID,
+                date,
+                userID,
+                morningStartTime,
+                morningEndTime,
+                afternoonStartTime,
+                afternoonEndTime,
+                dayTypeID,
+                (
+                    CASE
+                        WHEN morningStartTime IS NOT NULL AND morningEndTime IS NOT NULL THEN
+                            ((strftime('%H', morningEndTime) * 60 + strftime('%M', morningEndTime)) -
+                            (strftime('%H', morningStartTime) * 60 + strftime('%M', morningStartTime))) / 60.0
+                        ELSE 0
+                    END
+                ) +
+                (
+                    CASE
+                        WHEN afternoonStartTime IS NOT NULL AND afternoonEndTime IS NOT NULL THEN
+                            ((strftime('%H', afternoonEndTime) * 60 + strftime('%M', afternoonEndTime)) -
+                            (strftime('%H', afternoonStartTime) * 60 + strftime('%M', afternoonStartTime))) / 60.0
+                        ELSE 0
+                    END
+                ) AS extraHours
+            FROM
+                extraHours;`
+    )
 }
 
 export async function populate() {

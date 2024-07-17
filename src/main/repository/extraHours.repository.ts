@@ -1,4 +1,5 @@
 import { db } from "@main/config/database";
+import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
 import { Statement } from "sqlite3";
@@ -173,5 +174,36 @@ export async function getUserExtraHoursByDate(userID: number, date: string): Pro
                 resolve(null)
             }
         });
+    })
+}
+
+export async function getUserAllExtraHoursResumeByYearAndMonth(userID:number, year: string, month: string): Promise<IExtraHoursResume[] | null> {
+    return new Promise((resolve, reject) => {
+        const userHours: IExtraHoursResume[] = []
+
+        db.serialize(() => {
+            const sql: string = `
+                SELECT extraHourID, userId, dayTypeID, date, strftime('%m', date) AS 'Month', strftime('%Y', date) AS 'Year', extraHours FROM v_test WHERE userID = ? AND Month = ? AND Year = ?
+            `
+
+            const stmt: Statement = db.prepare(sql);
+
+            stmt.all(userID,
+                month,
+                year,
+                (err: Error | null, rows : Array<IExtraHoursResume>) => {
+                    if (err) {
+                        console.error("Failed to fetching extra hours resume from database: ", err.message)
+                        reject(err)
+                        return;
+                    }
+
+                    rows.forEach((row: IExtraHoursResume) => {
+                        userHours.push(row)
+                    })
+
+                    resolve(userHours)
+            });
+        })
     })
 }
