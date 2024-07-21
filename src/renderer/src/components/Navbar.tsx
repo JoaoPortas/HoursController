@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">Offcanvas navbar</a>
+        <Link className="navbar-brand" to="/dashboard">EHours</Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -40,9 +40,9 @@ const Navbar: React.FC = () => {
               <li className="nav-item">
                 <Link className="nav-link active" aria-current="page" to="/dashboard">Home</Link>
               </li>
-              <li className="nav-item">
+              {/*<li className="nav-item">
                 <a className="nav-link" href="#">Link</a>
-              </li>
+              </li>*/}
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
