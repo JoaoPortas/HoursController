@@ -101,7 +101,10 @@ const Dashboard: React.FC = () => {
     useEffect(() => {
         // Update progress bar based on totalHours
         document.querySelectorAll('.progress').forEach((element) => {
-            const value = totalHours.toString();
+            let value = totalHours.toString();
+
+            if (totalHours > 100) value = "100"
+
             if (value) {
                 const progressValue = parseInt(value, 10);
                 const left = element.querySelector('.progress-left .progress-bar') as HTMLElement;
