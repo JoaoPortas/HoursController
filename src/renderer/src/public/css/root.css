@@ -78,3 +78,9 @@ main {
     top: 0;
     left: 0;
   }
+
+.gradient-border {
+    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #3acfd5 0%, #3a4ed5 100%) border-box;
+    border-radius: 5px;
+    border: 1px solid transparent;
+}

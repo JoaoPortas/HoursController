@@ -12,7 +12,7 @@ const Dashboard: React.FC = () => {
     );
 
     async function test() {
-        const data: IExtraHoursResume[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserAllExtraHoursResumeByYearAndMonth", userId, new Date().getFullYear().toString(), currentMonth) as IExtraHoursResume[];
+        const data: IExtraHoursResume[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserAllExtraHoursResumeByYear", userId, new Date().getFullYear().toString()) as IExtraHoursResume[];
         console.log(data)
 
         let total: number = 0
@@ -25,8 +25,10 @@ const Dashboard: React.FC = () => {
     }
 
     useEffect(() => {
+        test()
+
         document.querySelectorAll('.progress').forEach((element) => {
-          const value = element.getAttribute('data-value');
+          const value = totalHours.toString();//element.getAttribute('data-value');
           if (value) {
             const progressValue = parseInt(value, 10);
             const left = element.querySelector('.progress-left .progress-bar') as HTMLElement;
@@ -42,53 +44,49 @@ const Dashboard: React.FC = () => {
             }
           }
         });
-      }, []);
+      }, [test]);
 
       const percentageToDegrees = (percentage: number): number => {
         return (percentage / 100) * 360;
       };
-
-    test()
 
     return (
         <>
             <main>
                 <h1>Dashboard</h1>
                 {userId && <p>Logged in as user ID: {userId}</p>}
-                <div className="row">
-                    <div className="col-sm-6">
-                        <div className="card">
-                        <div className="card-body">
-                            <h5 className="card-title">Special title treatment</h5>
-                            <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                            <a href="#" className="btn btn-primary">Go somewhere</a>
-                        </div>
-                        </div>
-                    </div>
-                    <div className="col-sm-6">
-                        <div className="card">
-                        <div className="card-body">
-                        <div className="bg-white rounded-lg p-5 shadow">
-                    <div className="row">
-                        <div className="col">
-                            <h6>Horas feitas no mês de Julho: </h6> {totalHours}
-                        </div>
-                        <div className="col">
-                            <div className="progress mx-auto" data-value='70'>
-                                <span className="progress-left">
-                                    <span className="progress-bar border-primary"></span>
-                                </span>
-                                <span className="progress-right">
-                                    <span className="progress-bar border-primary"></span>
-                                </span>
-                                <div className="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
-                                    <div className="h2 font-weight-bold">80<sup className="small">%</sup></div>
+                <div className="container text-center">
+                    <div className="row g-2">
+                        <div className="col-6">
+                            <div className="p-3 gradient-border">
+                                <div className="col">
+                                    <div style={{display: "inline-flex"}}>Horas extra totais (2024): {totalHours} <div style={{fontSize: "0.875em", color: "#6c757d"}}><span style={{verticalAlign: "middle", marginLeft: "5px"}}>/100 horas</span></div></div>
+                                </div>
+                                <div style={{marginTop: "15px"}} className="col">
+                                    <div className="progress mx-auto" data-value="14">
+                                        <span className="progress-left">
+                                            <span className="progress-bar border-primary"></span>
+                                        </span>
+                                        <span className="progress-right">
+                                            <span className="progress-bar border-primary"></span>
+                                        </span>
+                                        <div className="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                            <div className="h2 font-weight-bold">
+                                            {totalHours/1}<sup className="small">%</sup>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div className="col-6">
+                            <div className="p-3">Custom column padding</div>
                         </div>
+                        <div className="col-6">
+                            <div className="p-3">Custom column padding</div>
+                        </div>
+                        <div className="col-6">
+                            <div className="p-3">Custom column padding</div>
                         </div>
                     </div>
                 </div>
@@ -125,7 +123,7 @@ const Dashboard: React.FC = () => {
                 <Link to="/">Go to /</Link>
             </main>
         </>
-    );
+    )
 };
 
 export default Dashboard;

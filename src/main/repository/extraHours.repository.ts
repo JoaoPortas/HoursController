@@ -207,3 +207,33 @@ export async function getUserAllExtraHoursResumeByYearAndMonth(userID:number, ye
         })
     })
 }
+
+export async function getUserAllExtraHoursResumeByYear(userID:number, year: string): Promise<IExtraHoursResume[] | null> {
+    return new Promise((resolve, reject) => {
+        const userHours: IExtraHoursResume[] = []
+
+        db.serialize(() => {
+            const sql: string = `
+                SELECT extraHourID, userId, dayTypeID, date, strftime('%m', date) AS 'Month', strftime('%Y', date) AS 'Year', extraHours FROM v_test WHERE userID = ? AND Year = ?
+            `
+
+            const stmt: Statement = db.prepare(sql);
+
+            stmt.all(userID,
+                year,
+                (err: Error | null, rows : Array<IExtraHoursResume>) => {
+                    if (err) {
+                        console.error("Failed to fetching extra hours resume from database: ", err.message)
+                        reject(err)
+                        return;
+                    }
+
+                    rows.forEach((row: IExtraHoursResume) => {
+                        userHours.push(row)
+                    })
+
+                    resolve(userHours)
+            });
+        })
+    })
+}
