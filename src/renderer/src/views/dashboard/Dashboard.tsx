@@ -164,9 +164,9 @@ const Dashboard: React.FC = () => {
                                     <div className="col">
                                         <span style={{width: "100px"}} className="badge text-bg-primary">125%: {hoursAt25}</span>
                                         <br />
-                                        <span style={{width: "100px"}} className="badge text-bg-secondary">137.5%: {hoursAt37Dot5}</span>
+                                        <span style={{width: "100px"}} className="badge text-bg-info">137.5%: {hoursAt37Dot5}</span>
                                         <br />
-                                        <span style={{width: "100px"}} className="badge text-bg-success">150%: {hoursAt50}</span>
+                                        <span style={{width: "100px"}} className="badge text-bg-primary">150%: {hoursAt50}</span>
                                         <br />
                                         <span style={{width: "100px"}} className="badge text-bg-info">175%: {hoursAt75}</span>
                                     </div>
