@@ -10,6 +10,7 @@ main {
 *
 */
 
+/* styles.css */
 .progress {
     width: 90px;
     height: 90px;
@@ -49,6 +50,8 @@ main {
     border-style: solid;
     position: absolute;
     top: 0;
+    transition: transform 1s ease-in-out; /* Apply transition */
+    transform: rotate(0deg); /* Ensure initial state */
   }
 
   .progress .progress-left .progress-bar {
@@ -56,7 +59,6 @@ main {
     border-top-right-radius: 80px;
     border-bottom-right-radius: 80px;
     border-left: 0;
-    -webkit-transform-origin: center left;
     transform-origin: center left;
   }
 
@@ -69,7 +71,6 @@ main {
     border-top-left-radius: 80px;
     border-bottom-left-radius: 80px;
     border-right: 0;
-    -webkit-transform-origin: center right;
     transform-origin: center right;
   }
 
