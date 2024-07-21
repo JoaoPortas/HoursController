@@ -21,46 +21,29 @@ const Dashboard: React.FC = () => {
             total += elm.extraHours
         })
         console.log(total)
-        setTotalHours(total)
+        setTotalHours(90)
     }
 
     useEffect(() => {
         test()
 
-        const updateProgressBars = () => {
-            document.querySelectorAll('.progress').forEach((element) => {
-              const value = totalHours.toString(); // Convert totalHours to string
-              if (value) {
-                const progressValue = parseInt(value, 10);
-                const left = element.querySelector('.progress-left .progress-bar') as HTMLElement;
-                const right = element.querySelector('.progress-right .progress-bar') as HTMLElement;
+        document.querySelectorAll('.progress').forEach((element) => {
+          const value = totalHours.toString();//element.getAttribute('data-value');
+          if (value) {
+            const progressValue = parseInt(value, 10);
+            const left = element.querySelector('.progress-left .progress-bar') as HTMLElement;
+            const right = element.querySelector('.progress-right .progress-bar') as HTMLElement;
 
-                // Set initial state
-                right.style.transform = `rotate(0deg)`;
-                left.style.transform = `rotate(0deg)`;
-
-                // Trigger animation after initial render
-                setTimeout(() => {
-                  if (progressValue > 0) {
-                    if (progressValue <= 50) {
-                      right.style.transform = `rotate(${percentageToDegrees(progressValue)}deg)`;
-                    } else {
-                      right.style.transform = `rotate(180deg)`;
-                      left.style.transform = `rotate(${percentageToDegrees(progressValue - 50)}deg)`;
-                    }
-                  }
-                }, 100); // Adjust the delay as needed
+            if (progressValue > 0) {
+              if (progressValue <= 50) {
+                right.style.transform = `rotate(${percentageToDegrees(progressValue)}deg)`;
+              } else {
+                right.style.transform = `rotate(180deg)`;
+                left.style.transform = `rotate(${percentageToDegrees(progressValue - 50)}deg)`;
               }
-            });
-          };
-
-          // Ensure updateProgressBars runs after the document is fully loaded
-    if (document.readyState === 'complete') {
-        updateProgressBars();
-      } else {
-        window.addEventListener('load', updateProgressBars);
-        return () => window.removeEventListener('load', updateProgressBars);
-      }
+            }
+          }
+        });
       }, [test]);
 
       const percentageToDegrees = (percentage: number): number => {
