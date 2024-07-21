@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
                   <li><Link className="dropdown-item" to="/hoursControl/hoursRegist">Registar Horas</Link></li>
                   <li><Link className="dropdown-item" to="/hoursManagement/registeredHours">Consulta de Horas</Link></li>
                   <li><hr className="dropdown-divider" /></li>
-                  <li><Link className="dropdown-item" to="/hoursControl/hoursRegist">Outro</Link></li>
+                  <li><Link className="dropdown-item" to="/hoursManagement/export">Exportar Documento</Link></li>
                 </ul>
               </li>
             </ul>

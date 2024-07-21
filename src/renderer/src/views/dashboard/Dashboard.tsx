@@ -177,10 +177,20 @@ const Dashboard: React.FC = () => {
                             </div>
                         </div>
                         <div className="col-6">
-                            <div className="p-3">Custom column padding</div>
-                        </div>
-                        <div className="col-6">
-                            <div className="p-3">Custom column padding</div>
+                            <div style={{height: "194px"}} className="p-3 gradient-border">
+                                <div className="row">
+                                    <div className="col">
+                                        <div>Horas de fins-de-semana e feriados (2024)</div>
+                                    </div>
+                                </div>
+                                <div style={{marginTop: "13px", fontSize: "17px"}} className="row">
+                                    <div className="col">
+                                        <span style={{width: "100px"}} className="badge text-bg-primary">150%: X</span>
+                                        <br/>
+                                        <span style={{width: "100px"}} className="badge text-bg-primary">200%: X</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
