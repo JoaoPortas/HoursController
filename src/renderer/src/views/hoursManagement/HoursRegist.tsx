@@ -186,7 +186,7 @@ const HoursRegist: React.FC = () => {
         }
 
         if (registedHours.morningStartTime) setMorningStartRegisted(registedHours.morningStartTime)
-        if (registedHours.morningEndTime) setMorningEndRegisted(registedHours.morningStartTime)
+        if (registedHours.morningEndTime) setMorningEndRegisted(registedHours.morningEndTime)
         if (registedHours.afternoonStartTime) setAfternoonStartRegisted(registedHours.afternoonStartTime)
         if (registedHours.afternoonEndTime) setAfternoonEndRegisted(registedHours.afternoonEndTime)
         setUpdate(true)
