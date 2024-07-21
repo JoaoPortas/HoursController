@@ -11,44 +11,75 @@ const Dashboard: React.FC = () => {
         (new Date().getMonth() + 1).toString().padStart(2, '0')
     );
 
-    async function test() {
+    // Function to calculate hours and percentages
+    async function test(hours: IExtraHoursResume[]) {
+        let totalHours = 0;
+        let hoursFor25 = 0;
+        let hoursFor37Dot5 = 0;
+
+        hours.forEach((elm: IExtraHoursResume) => {
+            totalHours += elm.extraHours;
+
+            if (elm.extraHours > 0) {
+                hoursFor25 += 1;
+                elm.extraHours -= 1;
+                if (elm.extraHours > 0) {
+                    hoursFor37Dot5 += elm.extraHours;
+                }
+            }
+        });
+
+        console.log("Total hours: ", totalHours);
+        console.log("Hours at 25%: ", hoursFor25);
+        console.log("Hours at 37.5%: ", hoursFor37Dot5);
+    }
+
+    // Fetch user hours and calculate total
+    async function getAndSetUserCurrentYearHours() {
         const data: IExtraHoursResume[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserAllExtraHoursResumeByYear", userId, new Date().getFullYear().toString()) as IExtraHoursResume[];
-        console.log(data)
 
-        let total: number = 0
+        let total: number = 0;
+        if (data) {
+            data.forEach((elm: IExtraHoursResume) => {
+                total += elm.extraHours;
+            });
+        }
 
-        data.forEach((elm: IExtraHoursResume) => {
-            total += elm.extraHours
-        })
-        console.log(total)
-        setTotalHours(90)
+        setTotalHours(total);
+        if (data) {
+            test(data);
+        }
     }
 
     useEffect(() => {
-        test()
+        getAndSetUserCurrentYearHours();
+    }, [userId]); // Run only when userId changes
 
+    useEffect(() => {
+        // Update progress bar based on totalHours
         document.querySelectorAll('.progress').forEach((element) => {
-          const value = totalHours.toString();//element.getAttribute('data-value');
-          if (value) {
-            const progressValue = parseInt(value, 10);
-            const left = element.querySelector('.progress-left .progress-bar') as HTMLElement;
-            const right = element.querySelector('.progress-right .progress-bar') as HTMLElement;
+            const value = totalHours.toString();
+            if (value) {
+                const progressValue = parseInt(value, 10);
+                const left = element.querySelector('.progress-left .progress-bar') as HTMLElement;
+                const right = element.querySelector('.progress-right .progress-bar') as HTMLElement;
 
-            if (progressValue > 0) {
-              if (progressValue <= 50) {
-                right.style.transform = `rotate(${percentageToDegrees(progressValue)}deg)`;
-              } else {
-                right.style.transform = `rotate(180deg)`;
-                left.style.transform = `rotate(${percentageToDegrees(progressValue - 50)}deg)`;
-              }
+                if (progressValue > 0) {
+                    if (progressValue <= 50) {
+                        right.style.transform = `rotate(${percentageToDegrees(progressValue)}deg)`;
+                        left.style.transform = `rotate(0deg)`; // Reset left bar
+                    } else {
+                        right.style.transform = `rotate(180deg)`;
+                        left.style.transform = `rotate(${percentageToDegrees(progressValue - 50)}deg)`;
+                    }
+                }
             }
-          }
         });
-      }, [test]);
+    }, [totalHours]);
 
-      const percentageToDegrees = (percentage: number): number => {
+    const percentageToDegrees = (percentage: number): number => {
         return (percentage / 100) * 360;
-      };
+    };
 
     return (
         <>
