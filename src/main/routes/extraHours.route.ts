@@ -1,8 +1,9 @@
-import { createExtraHoursRegist, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, updateExtraHoursRegist } from "@main/repository/extraHours.repository";
+import { createExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, updateExtraHoursRegist } from "@main/repository/extraHours.repository";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
 import { ipcMain } from "electron";
+import * as fs from "fs";
 
 export function registHoursRoutes(routeName: string) {
     ipcMain.handle(routeName + '/create', async (_event, newExtraHours: IBaseExtraHoursRegist): Promise<IBaseExtraHoursRegist | null> => {
@@ -37,6 +38,21 @@ export function registHoursRoutes(routeName: string) {
 
     ipcMain.handle(routeName + '/getUserAllExtraHoursResumeByYear', async (_event, userID: number, year: string): Promise<IExtraHoursResume[] | null> => {
         const result = await getUserAllExtraHoursResumeByYear(userID, year)
+        return result
+    })
+
+    ipcMain.handle('read-file', async (_event, filePath) => {
+        try {
+          const content = await fs.readFileSync(filePath);
+          return content;
+        } catch (error) {
+          console.error('Error reading file:', error);
+          throw error;
+        }
+    });
+
+    ipcMain.handle(routeName + '/getAllUsersExtraHoursByYearAndMonth', async (_event, year: string, month: string): Promise<UserExtraHoursViewModel[] | null> => {
+        const result = await getAllUsersExtraHoursByYearAndMonth(year, month)
         return result
     })
 }

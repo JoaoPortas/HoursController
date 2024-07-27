@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from "react-router-dom";
 import Login from './views/auth/Login';
 
 const App: React.FC = () => {

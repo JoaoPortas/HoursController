@@ -97,7 +97,7 @@ const HoursRegist: React.FC = () => {
                     morningStartValue === "" ? null : morningStartValue,
                     morningEndValue === "" ? null : morningEndValue,
                     afternoonStartValue === "" ? null : afternoonStartValue,
-                    afternoonEndValue === "" ? null : afternoonEndValue, 1)
+                    afternoonEndValue === "" ? null : afternoonEndValue, 1, -1)
 
                 const response: IBaseExtraHoursRegist | null = await toast.promise(
                     window.electron.ipcRenderer.invoke("/hoursManagement/create", newExtraHours) as Promise<IBaseExtraHoursRegist | null>,
@@ -135,7 +135,7 @@ const HoursRegist: React.FC = () => {
                     morningStartValue === "" ? null : morningStartValue,
                     morningEndValue === "" ? null : morningEndValue,
                     afternoonStartValue === "" ? null : afternoonStartValue,
-                    afternoonEndValue === "" ? null : afternoonEndValue, 1)
+                    afternoonEndValue === "" ? null : afternoonEndValue, 1, -1)
 
                 const response: IBaseExtraHoursRegist | null = await toast.promise(
                     window.electron.ipcRenderer.invoke("/hoursManagement/update", newExtraHours) as Promise<IBaseExtraHoursRegist | null>,
@@ -213,11 +213,11 @@ const HoursRegist: React.FC = () => {
         }
     }
 
-    function getTodayDate(): string {
+    /*function getTodayDate(): string {
         const today = new Date();
         const formattedDate = today.toISOString().split('T')[0];
         return formattedDate
-    }
+    }*/
 
     useEffect(() => {
         const morningStart: HTMLInputElement = document.getElementById("morningStart") as HTMLInputElement

@@ -30,7 +30,7 @@ export async function setupDayTypes() {
         + ')')
 
         db.prepare('SELECT COUNT(dayTypeID) AS total FROM dayTypes').get(
-                (err: Error | null, row: { total: number }) => {
+                (_err: Error | null, row: { total: number }) => {
                     //console.log(row.total)
 
                     if (row.total == 0) {
@@ -98,6 +98,39 @@ export async function createViews() {
             FROM
                 extraHours;`
     )
+
+    db.run(`CREATE VIEW IF NOT EXISTS vUsersExtraHoursRows
+        AS
+        SELECT date,
+        u.userID,
+        u.number,
+        u.category,
+        u.position,
+        u.name,
+        morningStartTime,
+        morningEndTime,
+        afternoonStartTime,
+        afternoonEndTime,
+        strftime('%Y', date) AS 'Year', strftime('%m', date) AS 'Month', dayTypeID,
+                (
+                    CASE
+                        WHEN morningStartTime IS NOT NULL AND morningEndTime IS NOT NULL THEN
+                            ((strftime('%H', morningEndTime) * 60 + strftime('%M', morningEndTime)) -
+                            (strftime('%H', morningStartTime) * 60 + strftime('%M', morningStartTime))) / 60.0
+                        ELSE 0
+                    END
+                ) +
+                (
+                    CASE
+                        WHEN afternoonStartTime IS NOT NULL AND afternoonEndTime IS NOT NULL THEN
+                            ((strftime('%H', afternoonEndTime) * 60 + strftime('%M', afternoonEndTime)) -
+                            (strftime('%H', afternoonStartTime) * 60 + strftime('%M', afternoonStartTime))) / 60.0
+                        ELSE 0
+                    END
+                ) AS extraHours
+				FROM extraHours e
+				INNER JOIN users AS u ON u.userId = e.userID;`
+)
 }
 
 export async function populate() {

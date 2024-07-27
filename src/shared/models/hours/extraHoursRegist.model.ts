@@ -8,10 +8,12 @@ export class BaseExtraHoursRegist implements IBaseExtraHoursRegist {
     afternoonStartTime: string | null;
     afternoonEndTime: string | null;
     dayTypeID: number;
+    extraHours: number;
 
     constructor(date: string, userID: number, morningStartTime: string | null,
         morningEndTime: string | null, afternoonStartTime: string | null, afternoonEndTime: string | null,
-        dayTypeID: number
+        dayTypeID: number,
+        extraHours: number
     ) {
         this.date = date;
         this.userID = userID;
@@ -20,5 +22,6 @@ export class BaseExtraHoursRegist implements IBaseExtraHoursRegist {
         this.afternoonStartTime = afternoonStartTime;
         this.afternoonEndTime = afternoonEndTime;
         this.dayTypeID = dayTypeID;
+        this.extraHours = extraHours;
     }
 }

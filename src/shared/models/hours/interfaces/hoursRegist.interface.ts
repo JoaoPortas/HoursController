@@ -5,7 +5,8 @@ export interface IBaseExtraHoursRegist {
     morningEndTime?: string | null,
     afternoonStartTime?: string | null,
     afternoonEndTime?: string | null,
-    dayTypeID: number
+    dayTypeID: number,
+    extraHours: number
 }
 
 export interface IExtraHoursRegist {

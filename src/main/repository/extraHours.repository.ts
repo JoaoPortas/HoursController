@@ -1,6 +1,8 @@
 import { db } from "@main/config/database";
+import { BaseExtraHoursRegist } from "@shared/models/hours/extraHoursRegist.model";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
+import { IUsersExtraHoursRow } from "@shared/models/hours/interfaces/usersExtraHoursRow.interface";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
 import { Statement } from "sqlite3";
 
@@ -183,7 +185,7 @@ export async function getUserAllExtraHoursResumeByYearAndMonth(userID:number, ye
 
         db.serialize(() => {
             const sql: string = `
-                SELECT extraHourID, userId, dayTypeID, date, strftime('%m', date) AS 'Month', strftime('%Y', date) AS 'Year', extraHours FROM v_test WHERE userID = ? AND Month = ? AND Year = ?
+                SELECT extraHourID, userId, dayTypeID, date, strftime('%m', date) AS 'Month', strftime('%Y', date) AS 'Year', extraHours FROM vExtraHoursResume WHERE userID = ? AND Month = ? AND Year = ?
             `
 
             const stmt: Statement = db.prepare(sql);
@@ -214,7 +216,7 @@ export async function getUserAllExtraHoursResumeByYear(userID:number, year: stri
 
         db.serialize(() => {
             const sql: string = `
-                SELECT extraHourID, userId, dayTypeID, date, strftime('%m', date) AS 'Month', strftime('%Y', date) AS 'Year', extraHours FROM v_test WHERE userID = ? AND Year = ?
+                SELECT extraHourID, userId, dayTypeID, date, strftime('%m', date) AS 'Month', strftime('%Y', date) AS 'Year', extraHours FROM vExtraHoursResume WHERE userID = ? AND Year = ?
             `
 
             const stmt: Statement = db.prepare(sql);
@@ -234,6 +236,83 @@ export async function getUserAllExtraHoursResumeByYear(userID:number, year: stri
 
                     resolve(userHours)
             });
+        })
+    })
+}
+
+export async function getAllUsersExtraHoursByYearAndMonth(year: string, month: string): Promise<UserExtraHoursViewModel[] | null> {
+    return new Promise((resolve, reject) => {
+        let currentUserID: number | null = null;
+        //Receive the hours for the current user and when finish one user gets cleard and go to another.
+        let userHours: IBaseExtraHoursRegist[] = []
+        let user: UserExtraHoursViewModel | null = null;
+
+        const allUsers: UserExtraHoursViewModel[] = [];
+
+        let number: string = ""
+        let category: string = ""
+        let position: string = ""
+        let name: string = ""
+
+        db.serialize(() => {
+            const sql: string = `
+                SELECT date, userID, number, category, position, name, morningStartTime, morningEndTime, afternoonStartTime, afternoonEndTime, strftime('%Y', date) AS 'Year', strftime('%m', date) AS 'Month', dayTypeID, extraHours
+                FROM vUsersExtraHoursRows
+                WHERE Month = ? AND Year = ? ORDER BY userID ASC, date ASC
+            `
+
+            const stmt: Statement = db.prepare(sql);
+
+            stmt.all(
+                month,
+                year,
+                (err: Error | null, rows : Array<IUsersExtraHoursRow>) => {
+                    if (err) {
+                        console.error("Failed to fetching all users extra hours from database: ", err.message)
+                        reject(err)
+                        return;
+                    }
+
+                    rows.forEach((row: IUsersExtraHoursRow) => {
+                        if (currentUserID === null || currentUserID !== row.userId) {
+                            if (currentUserID === null) {
+                                currentUserID = row.userId;
+
+                                number = row.number;
+                                category = row.category;
+                                position = row.position;
+                                name = row.name;
+
+                                userHours.push(new BaseExtraHoursRegist(row.date, row.userId, row.morningStartTime, row.morningEndTime, row.afternoonStartTime, row.afternoonEndTime, row.dayType, row.extraHours))
+
+                                return
+                            }
+
+                            user = new UserExtraHoursViewModel(currentUserID, number, category, position, name, userHours);
+                            allUsers.push(user);
+
+
+                            //Restart counters and set the new user info
+                            currentUserID = row.userId;
+                            userHours = []
+                            user = null;
+
+                            number = row.number;
+                            category = row.category;
+                            position = row.position;
+                            name = row.name;
+                        }
+
+                        userHours.push(new BaseExtraHoursRegist(row.date, row.userId, row.morningStartTime, row.morningEndTime, row.afternoonStartTime, row.afternoonEndTime, row.dayType, row.extraHours))
+                    })
+
+                    user = new UserExtraHoursViewModel(currentUserID ?? -1, number, category, position, name, userHours);
+                    allUsers.push(user);
+
+                    resolve(allUsers)
+            });
+
+
         })
     })
 }
