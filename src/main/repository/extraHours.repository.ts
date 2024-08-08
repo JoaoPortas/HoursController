@@ -258,7 +258,7 @@ export async function getAllUsersExtraHoursByYearAndMonth(year: string, month: s
             const sql: string = `
                 SELECT date, userID, number, category, position, name, morningStartTime, morningEndTime, afternoonStartTime, afternoonEndTime, strftime('%Y', date) AS 'Year', strftime('%m', date) AS 'Month', dayTypeID, extraHours
                 FROM vUsersExtraHoursRows
-                WHERE Month = ? AND Year = ? ORDER BY userID ASC, date ASC
+                WHERE Month = ? AND Year = ? ORDER BY number ASC, date ASC
             `
 
             const stmt: Statement = db.prepare(sql);
@@ -283,7 +283,7 @@ export async function getAllUsersExtraHoursByYearAndMonth(year: string, month: s
                                 position = row.position;
                                 name = row.name;
 
-                                userHours.push(new BaseExtraHoursRegist(row.date, row.userId, row.morningStartTime, row.morningEndTime, row.afternoonStartTime, row.afternoonEndTime, row.dayType, row.extraHours))
+                                userHours.push(new BaseExtraHoursRegist(row.date, row.userId, row.morningStartTime, row.morningEndTime, row.afternoonStartTime, row.afternoonEndTime, row.dayTypeID, row.extraHours))
 
                                 return
                             }
@@ -303,7 +303,7 @@ export async function getAllUsersExtraHoursByYearAndMonth(year: string, month: s
                             name = row.name;
                         }
 
-                        userHours.push(new BaseExtraHoursRegist(row.date, row.userId, row.morningStartTime, row.morningEndTime, row.afternoonStartTime, row.afternoonEndTime, row.dayType, row.extraHours))
+                        userHours.push(new BaseExtraHoursRegist(row.date, row.userId, row.morningStartTime, row.morningEndTime, row.afternoonStartTime, row.afternoonEndTime, row.dayTypeID, row.extraHours))
                     })
 
                     user = new UserExtraHoursViewModel(currentUserID ?? -1, number, category, position, name, userHours);

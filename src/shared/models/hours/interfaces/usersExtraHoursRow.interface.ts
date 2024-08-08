@@ -9,6 +9,6 @@ export interface IUsersExtraHoursRow {
     morningEndTime: string | null;
     afternoonStartTime: string | null;
     afternoonEndTime: string | null;
-    dayType: number;
+    dayTypeID: number;
     extraHours: number;
 }

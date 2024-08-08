@@ -16,6 +16,9 @@ const Dashboard: React.FC = () => {
     const [hoursAt50, setHoursAt50] = useState(0)
     const [hoursAt75, setHoursAt75] = useState(0)
 
+    const [hoursAt50HolyDays, setHoursAt50HolyDays] = useState(0)
+    const [hoursAt100HolyDays, setHoursAt100HolyDays] = useState(0)
+
     // Function to calculate hours and percentages
     async function calculateExtraHoursTiers(hours: IExtraHoursResume[]) {
         let totalHours = 0;
@@ -23,47 +26,86 @@ const Dashboard: React.FC = () => {
         let hoursFor37Dot5 = 0;
         let hoursFor50 = 0;
         let hoursFor75 = 0;
+        let hoursFor50HolyDays = 0;
+        let hoursFor100HolyDays = 0;
 
         hours.forEach((elm: IExtraHoursResume) => {
             if (elm.extraHours <= 0) return;
 
             //Se as horas totais forem menor que zero adiciona a primeira a 25% e vê as restantes para adicionar a 37.5 se continuar <100
             if (totalHours < 100) {
-                hoursFor25 += 1;
-                elm.extraHours -= 1;
-                totalHours += 1;
+                if (elm.dayTypeID === 1) {
+                    hoursFor25 += 1;
+                    elm.extraHours -= 1;
+                    totalHours += 1;
 
-                if (elm.extraHours > 0) {
-                    //Guarda as horas totais atuais para uma variavel para validar se somar se o resto passa ou não das 100
-                    let tempTotalHours = totalHours
-                    tempTotalHours += elm.extraHours
+                    if (elm.extraHours > 0) {
+                        //Guarda as horas totais atuais para uma variavel para validar se somar se o resto passa ou não das 100
+                        let tempTotalHours = totalHours
+                        tempTotalHours += elm.extraHours
 
-                    //Se as horas totais + as restantes não passa dos 100 então adiciona a 37.5
-                    if (tempTotalHours <= 100) {
-                        hoursFor37Dot5 += elm.extraHours
+                        //Se as horas totais + as restantes não passa dos 100 então adiciona a 37.5
+                        if (tempTotalHours <= 100) {
+                            hoursFor37Dot5 += elm.extraHours
+                        }
+                        else { //Se as horas totais + as restantes passa dos 100 então calcula quantas horas n passa dos 100 e guarda numa varriável
+                            //E calcula as restantes que passam dos 100 e guarda a 50%
+
+                            //Guarda quantas horas que passaram das 100 para adicionar a 75%
+                            let restFor75 = tempTotalHours - 100
+
+                            //Tira as horas que têm que ir para os 75% calculadas anteriormente para obter para a var as horas até as 100 que vão continuar nos 37.5%
+                            let restFor37Dot5 = elm.extraHours - restFor75
+
+                            hoursFor37Dot5 += restFor37Dot5
+                            hoursFor75 += restFor75
+
+                        }
+                        totalHours += elm.extraHours
                     }
-                    else { //Se as horas totais + as restantes passa dos 100 então calcula quantas horas n passa dos 100 e guarda numa varriável
-                        //E calcula as restantes que passam dos 100 e guarda a 50%
+                }
+                else if (elm.dayTypeID === 2 || elm.dayTypeID === 3) {
+                    hoursFor50HolyDays += 1;
+                    elm.extraHours -= 1;
+                    totalHours += 1;
 
-                        //Guarda quantas horas que passaram das 100 para adicionar a 75%
-                        let restFor75 = tempTotalHours - 100
+                    if (elm.extraHours > 0) {
+                        //Guarda as horas totais atuais para uma variavel para validar se somar se o resto passa ou não das 100
+                        let tempTotalHours = totalHours
+                        tempTotalHours += elm.extraHours
 
-                        //Tira as horas que têm que ir para os 75% calculadas anteriormente para obter para a var as horas até as 100 que vão continuar nos 37.5%
-                        let restFor37Dot5 = elm.extraHours - restFor75
+                        //Se as horas totais + as restantes não passa dos 100 então adiciona a 37.5
+                        if (tempTotalHours <= 100) {
+                            hoursFor50HolyDays += elm.extraHours
+                        }
+                        else { //Se as horas totais + as restantes passa dos 100 então calcula quantas horas n passa dos 100 e guarda numa varriável
+                            //E calcula as restantes que passam dos 100 e guarda a 50%
 
-                        hoursFor37Dot5 += restFor37Dot5
-                        hoursFor75 += restFor75
+                            //Guarda quantas horas que passaram das 100 para adicionar a 75%
+                            let restFor100HolyDays = tempTotalHours - 100
 
+                            //Tira as horas que têm que ir para os 75% calculadas anteriormente para obter para a var as horas até as 100 que vão continuar nos 37.5%
+                            let restFor50HolyDays = elm.extraHours - restFor100HolyDays
+
+                            hoursFor50HolyDays += restFor50HolyDays
+                            hoursFor100HolyDays += restFor100HolyDays
+
+                        }
+                        totalHours += elm.extraHours
                     }
-                    totalHours += elm.extraHours
                 }
             } //Se as horas totais já forem superiores a 100 então pode se adicionar de acordo com as percentagens 50% para a primeira hora e 75 para as restantes
             else {
-                hoursFor50 += 1;
-                elm.extraHours -= 1;
-                totalHours += 1;
+                if (elm.dayTypeID === 1) {
+                    hoursFor50 += 1;
+                    elm.extraHours -= 1;
+                    totalHours += 1;
 
-                hoursFor75 += elm.extraHours
+                    hoursFor75 += elm.extraHours
+                }
+                else if (elm.dayTypeID === 2 || elm.dayTypeID === 3) {
+                    hoursFor100HolyDays += elm.extraHours;
+                }
             }
         });
 
@@ -72,10 +114,16 @@ const Dashboard: React.FC = () => {
         console.log("Hours at 37.5%: ", hoursFor37Dot5);
         console.log("Hours at 50%: ", hoursFor50);
         console.log("Hours at 75%: ", hoursFor75);
+
+        console.log("Hours Holy at 50%: ", hoursFor50HolyDays);
+        console.log("Hours Holy at 100%: ", hoursFor100HolyDays);
+
         setHoursAt25(hoursFor25)
         setHoursAt37Dot5(hoursFor37Dot5)
         setHoursAt50(hoursFor50)
         setHoursAt75(hoursFor75)
+        setHoursAt50HolyDays(hoursFor50HolyDays);
+        setHoursAt100HolyDays(hoursFor100HolyDays);
     }
 
     useEffect(() => {
@@ -185,9 +233,9 @@ const Dashboard: React.FC = () => {
                                 </div>
                                 <div style={{marginTop: "13px", fontSize: "17px"}} className="row">
                                     <div className="col">
-                                        <span style={{width: "100px"}} className="badge text-bg-primary">150%: X</span>
+                                        <span style={{width: "100px"}} className="badge text-bg-primary">150%: {hoursAt50HolyDays}</span>
                                         <br/>
-                                        <span style={{width: "100px"}} className="badge text-bg-primary">200%: X</span>
+                                        <span style={{width: "100px"}} className="badge text-bg-primary">200%: {hoursAt100HolyDays}</span>
                                     </div>
                                 </div>
                             </div>

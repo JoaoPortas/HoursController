@@ -15,6 +15,8 @@ interface HoursDetail {
     hoursAt37Dot5: number
     hoursAt50: number
     hoursAt75: number
+    hoursAt50HolyDays: number
+    hoursAt100HolyDays: number
 }
 
 // Define the structure of the outer object
@@ -46,55 +48,95 @@ const ExportHoursDocument: React.FC = () => {
         let hoursFor37Dot5 = 0;
         let hoursFor50 = 0;
         let hoursFor75 = 0;
+        let hoursFor50HolyDays = 0;
+        let hoursFor100HolyDays = 0;
 
         elm.userHours.forEach((elm: IBaseExtraHoursRegist) => {
-
+            console.log(elm);
 
             if (elm.extraHours <= 0) return;
 
             //Se as horas totais forem menor que zero adiciona a primeira a 25% e vê as restantes para adicionar a 37.5 se continuar <100
             if (totalHours < 100) {
-                hoursFor25 += 1;
-                elm.extraHours -= 1;
-                totalHours += 1;
+                if (elm.dayTypeID === 1) {
+                    hoursFor25 += 1;
+                    elm.extraHours -= 1;
+                    totalHours += 1;
 
-                if (elm.extraHours > 0) {
-                    //Guarda as horas totais atuais para uma variavel para validar se somar se o resto passa ou não das 100
-                    let tempTotalHours = totalHours
-                    tempTotalHours += elm.extraHours
+                    if (elm.extraHours > 0) {
+                        //Guarda as horas totais atuais para uma variavel para validar se somar se o resto passa ou não das 100
+                        let tempTotalHours = totalHours
+                        tempTotalHours += elm.extraHours
 
-                    //Se as horas totais + as restantes não passa dos 100 então adiciona a 37.5
-                    if (tempTotalHours <= 100) {
-                        hoursFor37Dot5 += elm.extraHours
+                        //Se as horas totais + as restantes não passa dos 100 então adiciona a 37.5
+                        if (tempTotalHours <= 100) {
+                            hoursFor37Dot5 += elm.extraHours
+                        }
+                        else { //Se as horas totais + as restantes passa dos 100 então calcula quantas horas n passa dos 100 e guarda numa varriável
+                            //E calcula as restantes que passam dos 100 e guarda a 50%
+
+                            //Guarda quantas horas que passaram das 100 para adicionar a 75%
+                            let restFor75 = tempTotalHours - 100
+
+                            //Tira as horas que têm que ir para os 75% calculadas anteriormente para obter para a var as horas até as 100 que vão continuar nos 37.5%
+                            let restFor37Dot5 = elm.extraHours - restFor75
+
+                            hoursFor37Dot5 += restFor37Dot5
+                            hoursFor75 += restFor75
+
+                        }
+                        totalHours += elm.extraHours
                     }
-                    else { //Se as horas totais + as restantes passa dos 100 então calcula quantas horas n passa dos 100 e guarda numa varriável
-                        //E calcula as restantes que passam dos 100 e guarda a 50%
+                }
+                else if (elm.dayTypeID === 2 || elm.dayTypeID === 3) {
+                    hoursFor50HolyDays += 1;
+                    elm.extraHours -= 1;
+                    totalHours += 1;
 
-                        //Guarda quantas horas que passaram das 100 para adicionar a 75%
-                        let restFor75 = tempTotalHours - 100
+                    if (elm.extraHours > 0) {
+                        //Guarda as horas totais atuais para uma variavel para validar se somar se o resto passa ou não das 100
+                        let tempTotalHours = totalHours
+                        tempTotalHours += elm.extraHours
 
-                        //Tira as horas que têm que ir para os 75% calculadas anteriormente para obter para a var as horas até as 100 que vão continuar nos 37.5%
-                        let restFor37Dot5 = elm.extraHours - restFor75
+                        //Se as horas totais + as restantes não passa dos 100 então adiciona a 37.5
+                        if (tempTotalHours <= 100) {
+                            hoursFor50HolyDays += elm.extraHours
+                        }
+                        else { //Se as horas totais + as restantes passa dos 100 então calcula quantas horas n passa dos 100 e guarda numa varriável
+                            //E calcula as restantes que passam dos 100 e guarda a 50%
 
-                        hoursFor37Dot5 += restFor37Dot5
-                        hoursFor75 += restFor75
+                            //Guarda quantas horas que passaram das 100 para adicionar a 75%
+                            let restFor100HolyDays = tempTotalHours - 100
 
+                            //Tira as horas que têm que ir para os 75% calculadas anteriormente para obter para a var as horas até as 100 que vão continuar nos 37.5%
+                            let restFor50HolyDays = elm.extraHours - restFor100HolyDays
+
+                            hoursFor50HolyDays += restFor50HolyDays
+                            hoursFor100HolyDays += restFor100HolyDays
+
+                        }
+                        totalHours += elm.extraHours
                     }
-                    totalHours += elm.extraHours
                 }
             } //Se as horas totais já forem superiores a 100 então pode se adicionar de acordo com as percentagens 50% para a primeira hora e 75 para as restantes
             else {
-                hoursFor50 += 1;
-                elm.extraHours -= 1;
-                totalHours += 1;
+                if (elm.dayTypeID === 1) {
+                    hoursFor50 += 1;
+                    elm.extraHours -= 1;
+                    totalHours += 1;
 
-                hoursFor75 += elm.extraHours
+                    hoursFor75 += elm.extraHours
+                }
+                else if (elm.dayTypeID === 2 || elm.dayTypeID === 3) {
+                    hoursFor100HolyDays += elm.extraHours;
+                }
             }
         });
 
-        let details: HoursDetail = { nip: elm.nip, category: elm.category, function: elm.position, name: elm.name, hoursAt25: hoursFor25, hoursAt37Dot5: hoursFor37Dot5, hoursAt50: hoursFor50, hoursAt75: hoursFor75 }
+        let details: HoursDetail = { nip: elm.nip, category: elm.category, function: elm.position, name: elm.name, hoursAt25: hoursFor25, hoursAt37Dot5: hoursFor37Dot5, hoursAt50: hoursFor50, hoursAt75: hoursFor75, hoursAt50HolyDays: hoursFor50HolyDays, hoursAt100HolyDays: hoursFor100HolyDays }
         let uh: UserHours = { userId: elm.userID, userHours: details }
         userHoursStats.push(uh);
+        console.log(details);
     }
 
     async function generateHoursRows(usersHoursData: UserExtraHoursViewModel[] | null): Promise<TableRow[]> {
@@ -151,6 +193,7 @@ const ExportHoursDocument: React.FC = () => {
                                 }),
                                 new TableCell({
                                     verticalAlign: "center",
+                                    columnSpan: 2,
                                     children: [new Paragraph({
                                         alignment: AlignmentType.CENTER,
                                         children: [
@@ -227,6 +270,7 @@ const ExportHoursDocument: React.FC = () => {
                                 }),
                                 new TableCell({
                                     verticalAlign: "center",
+                                    columnSpan: 2,
                                     children: [new Paragraph({
                                         alignment: AlignmentType.CENTER,
                                         children: [
@@ -336,6 +380,90 @@ const ExportHoursDocument: React.FC = () => {
                                 ]
                             })],
                         }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: `${user.userHours.hoursAt75}`, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                    ],
+                }),
+            )
+        })
+
+        return workersRows
+    }
+
+    async function generateWorkersHolyDaysRows(usersHoursStatsData: UserHours[]): Promise<TableRow[]> {
+        let workersRows: TableRow[] = [];
+
+        usersHoursStatsData.forEach(user => {
+            workersRows.push(
+                new TableRow({
+                    children: [
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: user.userHours.nip, size: 20, bold: false, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            margins: {
+                                top: 50,
+                                bottom: 50
+                            },
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: user.userHours.category, size: 20, bold: false, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: user.userHours.function, size: 20, bold: false, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.LEFT,
+                                children: [
+                                    new TextRun({text: user.userHours.name, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            columnSpan: 2,
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: `${user.userHours.hoursAt50HolyDays}`, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            columnSpan: 2,
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: `${user.userHours.hoursAt100HolyDays}`, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
                     ],
                 }),
             )
@@ -346,11 +474,10 @@ const ExportHoursDocument: React.FC = () => {
 
     const generateDocument = async () => {
         let document = await await window.electron.ipcRenderer.invoke(
-            "read-file", './resources/template.docx'
+            "read-file", './resources/template_' + 'female' +'.docx'
         )
 
-        const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", new Date().getFullYear().toString(), currentMonth) as UserExtraHoursViewModel[];
-
+        const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", new Date().getFullYear().toString(), /*currentMonth*/'07') as UserExtraHoursViewModel[];
         const hoursHeaderRow: TableRow = new TableRow({
             children: [
                 new TableCell({
@@ -397,6 +524,7 @@ const ExportHoursDocument: React.FC = () => {
                 }),
                 new TableCell({
                     verticalAlign: "center",
+                    columnSpan: 2,
                     children: [new Paragraph({
                         alignment: AlignmentType.CENTER,
                         children: [
@@ -444,13 +572,15 @@ const ExportHoursDocument: React.FC = () => {
                         top: 250,
                         bottom: 250
                     },
-                    columnSpan: 3,
+                    columnSpan: 4,
                     children: [new Paragraph({
                         alignment: AlignmentType.CENTER,
                         children: [
                             new TextRun({text: "HORAS", size: 20, bold: true, font: "Tahoma"}),
                             new TextRun({break: 1}),
-                            new TextRun({text: "EFECTUADAS", size: 20, bold: true, font: "Tahoma"})
+                            new TextRun({text: "EFECTUADAS", size: 20, bold: true, font: "Tahoma"}),
+                            new TextRun({break: 1}),
+                            new TextRun({text: "(Semana)", size: 20, bold: true, font: "Tahoma"})
                         ]
                     })],
                 }),
@@ -458,6 +588,155 @@ const ExportHoursDocument: React.FC = () => {
         })
 
         const workersSubHeader: TableRow = new TableRow({
+            children: [
+                new TableCell({
+                    verticalAlign: "center",
+                    width: {
+                        type: WidthType.PERCENTAGE,
+                        size: 10
+                    },
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "NIP/MÓD.", size: 20, bold: true, font: "Tahoma"}),
+                        ]
+                    })],
+                }),
+                new TableCell({
+                    width: {
+                        type: WidthType.PERCENTAGE,
+                        size: 15
+                    },
+                    verticalAlign: "center",
+                    margins: {
+                        top: 50,
+                        bottom: 50
+                    },
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "CATEGORIA/", size: 20, bold: true, font: "Tahoma"}),
+                            new TextRun({break: 1}),
+                            new TextRun({text: "CARREIRA", size: 20, bold: true, font: "Tahoma"})
+                        ]
+                    })],
+                }),
+                new TableCell({
+                    width: {
+                        type: WidthType.PERCENTAGE,
+                        size: 20
+                    },
+                    verticalAlign: "center",
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "FUNÇÕES", size: 20, bold: true, font: "Tahoma"}),
+                        ]
+                    })],
+                }),
+                new TableCell({
+                    width: {
+                        type: WidthType.PERCENTAGE,
+                        size: 20
+                    },
+                    verticalAlign: "center",
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "NOME", size: 20, bold: true, font: "Tahoma"}),
+                        ]
+                    })],
+                }),
+                new TableCell({
+                    width: {
+                        type: WidthType.DXA,
+                        size: 10
+                    },
+                    verticalAlign: "center",
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "125%", size: 20, bold: true, font: "Tahoma"}),
+                        ]
+                    })],
+                }),
+                new TableCell({
+                    width: {
+                        type: WidthType.DXA,
+                        size: 10
+                    },
+                    verticalAlign: "center",
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "137,5%", size: 20, bold: true, font: "Tahoma"}),
+                        ]
+                    })],
+                }),
+                new TableCell({
+                    width: {
+                        type: WidthType.DXA,
+                        size: 10
+                    },
+                    verticalAlign: "center",
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "150%", size: 20, bold: true, font: "Tahoma"}),
+                        ]
+                    })],
+                }),
+                new TableCell({
+                    width: {
+                        type: WidthType.DXA,
+                        size: 10
+                    },
+                    verticalAlign: "center",
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "175%", size: 20, bold: true, font: "Tahoma"}),
+                        ]
+                    })],
+                }),
+            ],
+        })
+
+        const workersHolyDaysMainHeader: TableRow = new TableRow({
+            children: [
+                new TableCell({
+
+                    verticalAlign: "center",
+                    columnSpan: 4,
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "FUNCIONÁRIO", size: 20, bold: true, font: "Tahoma"})
+                        ]
+                    })],
+                }),
+                new TableCell({
+
+                    margins: {
+                        top: 250,
+                        bottom: 250
+                    },
+                    columnSpan: 4,
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "HORAS", size: 20, bold: true, font: "Tahoma"}),
+                            new TextRun({break: 1}),
+                            new TextRun({text: "EFECTUADAS", size: 20, bold: true, font: "Tahoma"}),
+                            new TextRun({break: 1}),
+                            new TextRun({text: "(Fins-de-semana e feriados)", size: 20, bold: true, font: "Tahoma"})
+                        ]
+                    })],
+                }),
+            ],
+        })
+
+        const workersHolyDaysSubHeader: TableRow = new TableRow({
             children: [
                 new TableCell({
                     verticalAlign: "center",
@@ -520,39 +799,28 @@ const ExportHoursDocument: React.FC = () => {
                 new TableCell({
                     width: {
                         type: WidthType.DXA,
-                        size: 15
+                        size: 22.5
                     },
-                    verticalAlign: "center",
-                    children: [new Paragraph({
-                        alignment: AlignmentType.CENTER,
-                        children: [
-                            new TextRun({text: "125%", size: 20, bold: true, font: "Tahoma"}),
-                        ]
-                    })],
-                }),
-                new TableCell({
-                    width: {
-                        type: WidthType.DXA,
-                        size: 15
-                    },
-                    verticalAlign: "center",
-                    children: [new Paragraph({
-                        alignment: AlignmentType.CENTER,
-                        children: [
-                            new TextRun({text: "137,5%", size: 20, bold: true, font: "Tahoma"}),
-                        ]
-                    })],
-                }),
-                new TableCell({
-                    width: {
-                        type: WidthType.DXA,
-                        size: 15
-                    },
+                    columnSpan: 2,
                     verticalAlign: "center",
                     children: [new Paragraph({
                         alignment: AlignmentType.CENTER,
                         children: [
                             new TextRun({text: "150%", size: 20, bold: true, font: "Tahoma"}),
+                        ]
+                    })],
+                }),
+                new TableCell({
+                    width: {
+                        type: WidthType.DXA,
+                        size: 22.5
+                    },
+                    columnSpan: 2,
+                    verticalAlign: "center",
+                    children: [new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        children: [
+                            new TextRun({text: "200%", size: 20, bold: true, font: "Tahoma"}),
                         ]
                     })],
                 }),
@@ -572,6 +840,13 @@ const ExportHoursDocument: React.FC = () => {
         let workersRowsLoad: TableRow[] = await generateWorkersRows(userHoursStats);
         workersRows = [...workersRows, ...workersRowsLoad];
 
+        //Workers HolyDays Stats
+        let workersHolyDaysRows: TableRow[] = [];
+        workersHolyDaysRows.push(workersHolyDaysMainHeader);
+        workersHolyDaysRows.push(workersHolyDaysSubHeader);
+        let workersHolyDaysRowsLoad: TableRow[] = await generateWorkersHolyDaysRows(userHoursStats);
+        workersHolyDaysRows = [...workersHolyDaysRows, ...workersHolyDaysRowsLoad];
+
         patchDocument(document, {
             patches: {
                 month: {
@@ -588,6 +863,11 @@ const ExportHoursDocument: React.FC = () => {
                             },
                             rows: [
                                 ...workersRows,
+                                new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
+                                    right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
+                                new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
+                                    right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
+                                ...workersHolyDaysRows,
                                 //Dados
                                 new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
                                     right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
@@ -601,6 +881,34 @@ const ExportHoursDocument: React.FC = () => {
                             ],
                         })
                     ],
+                },
+                indicative: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "O"})],
+                },
+                sub_day: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "30"})],
+                },
+                sub_month: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "JANEIRO"})],
+                },
+                sub_year: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "2020"})],
+                },
+                capitans_name: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "Nome do cap.", font: "Times New Roman", size: 24})],
+                },
+                patent: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "Patente", font: "Times New Roman", size: 20})],
+                },
+                expertise: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "Especialidade", font: "Times New Roman", size: 20})],
                 },
                 /*hours_table: {
                     type: PatchType.DOCUMENT,

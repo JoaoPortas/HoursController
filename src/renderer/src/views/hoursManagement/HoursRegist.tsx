@@ -35,12 +35,14 @@ const HoursRegist: React.FC = () => {
         const morningEnd: HTMLInputElement = form.elements.namedItem("morningEnd") as HTMLInputElement
         const afternoonStart: HTMLInputElement = form.elements.namedItem("afternoonStart") as HTMLInputElement
         const afternoonEnd: HTMLInputElement = form.elements.namedItem("afternoonEnd") as HTMLInputElement
+        const dayType: HTMLInputElement = form.elements.namedItem("dayType") as HTMLInputElement
 
         const dateValue: string = date.value
         const morningStartValue: string = morningStart.value
         const morningEndValue: string = morningEnd.value
         const afternoonStartValue: string = afternoonStart.value
         const afternoonEndValue: string = afternoonEnd.value
+        const dayTypeValue: number = +dayType.value;
 
         let hasFormErrors = false
         let hasHoursErrors = false
@@ -97,7 +99,7 @@ const HoursRegist: React.FC = () => {
                     morningStartValue === "" ? null : morningStartValue,
                     morningEndValue === "" ? null : morningEndValue,
                     afternoonStartValue === "" ? null : afternoonStartValue,
-                    afternoonEndValue === "" ? null : afternoonEndValue, 1, -1)
+                    afternoonEndValue === "" ? null : afternoonEndValue, dayTypeValue, -1)
 
                 const response: IBaseExtraHoursRegist | null = await toast.promise(
                     window.electron.ipcRenderer.invoke("/hoursManagement/create", newExtraHours) as Promise<IBaseExtraHoursRegist | null>,
@@ -135,7 +137,7 @@ const HoursRegist: React.FC = () => {
                     morningStartValue === "" ? null : morningStartValue,
                     morningEndValue === "" ? null : morningEndValue,
                     afternoonStartValue === "" ? null : afternoonStartValue,
-                    afternoonEndValue === "" ? null : afternoonEndValue, 1, -1)
+                    afternoonEndValue === "" ? null : afternoonEndValue, dayTypeValue, -1)
 
                 const response: IBaseExtraHoursRegist | null = await toast.promise(
                     window.electron.ipcRenderer.invoke("/hoursManagement/update", newExtraHours) as Promise<IBaseExtraHoursRegist | null>,
@@ -298,6 +300,19 @@ const HoursRegist: React.FC = () => {
                         <div className="col-sm-8">
                             {/*<div className="form-text" id="basic-addon4">Último dia registado: 08/07/2024</div>*/}
                             <input onChange={handleDateChange} type="date" className="form-control" id="date" name="date" required/>
+                            <div className="invalid-feedback">
+                                *Campo de preenchimento obrigatório
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row mb-3">
+                        <label style={verticalCenter} htmlFor="date" className="col-sm-4 col-form-label">Tipo de dia</label>
+                        <div className="col-sm-8">
+                            <select className="form-select" id="dayType" name="dayType">
+                                <option value={1} selected>Semana</option>
+                                <option value={2}>Fim de Semana</option>
+                                <option value={3}>Feriado</option>
+                            </select>
                             <div className="invalid-feedback">
                                 *Campo de preenchimento obrigatório
                             </div>
