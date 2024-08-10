@@ -316,3 +316,30 @@ export async function getAllUsersExtraHoursByYearAndMonth(year: string, month: s
         })
     })
 }
+
+export async function getUserTotalHoursExcludingMonthByYear(userID:number, year: string, excludedMonth: string): Promise<number | null> {
+    return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            const sql: string = `
+                SELECT strftime('%Y', date) AS 'Year', SUM(extraHours) AS 'Total' FROM vExtraHoursResume WHERE userID = ? AND Year = ? AND strftime('%m', date) != ?
+            `
+
+            const stmt: Statement = db.prepare(sql);
+
+            stmt.get(userID,
+                year,
+                excludedMonth,
+                (err: Error | null, row : { Year: string, Total: number }) => {
+                    if (err) {
+                        console.error("Failed to fetching total extra hours resume from database: ", err.message)
+                        reject(err)
+                        return;
+                    }
+
+                    console.log(row);
+
+                    resolve(row.Total)
+            });
+        })
+    })
+}

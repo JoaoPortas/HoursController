@@ -43,7 +43,10 @@ const ExportHoursDocument: React.FC = () => {
     const userHoursStats: UserHours[] = [];
 
     async function calculateHours(elm: UserExtraHoursViewModel) {
-        let totalHours = 0;
+        let fetchTotal = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserTotalHoursExcludingMonthByYear", elm.userID, '2024', /*currentMonth*/'08');
+        let totalHours = +fetchTotal;
+        //totalHours = fetchTotal;
+        //console.log("total", totalHours);
         let hoursFor25 = 0;
         let hoursFor37Dot5 = 0;
         let hoursFor50 = 0;
@@ -136,7 +139,7 @@ const ExportHoursDocument: React.FC = () => {
         let details: HoursDetail = { nip: elm.nip, category: elm.category, function: elm.position, name: elm.name, hoursAt25: hoursFor25, hoursAt37Dot5: hoursFor37Dot5, hoursAt50: hoursFor50, hoursAt75: hoursFor75, hoursAt50HolyDays: hoursFor50HolyDays, hoursAt100HolyDays: hoursFor100HolyDays }
         let uh: UserHours = { userId: elm.userID, userHours: details }
         userHoursStats.push(uh);
-        console.log(details);
+        console.log("Details", details);
     }
 
     async function generateHoursRows(usersHoursData: UserExtraHoursViewModel[] | null): Promise<TableRow[]> {
@@ -477,7 +480,7 @@ const ExportHoursDocument: React.FC = () => {
             "read-file", './resources/template_' + 'female' +'.docx'
         )
 
-        const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", new Date().getFullYear().toString(), /*currentMonth*/'07') as UserExtraHoursViewModel[];
+        const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", new Date().getFullYear().toString(), /*currentMonth*/'08') as UserExtraHoursViewModel[];
         const hoursHeaderRow: TableRow = new TableRow({
             children: [
                 new TableCell({
