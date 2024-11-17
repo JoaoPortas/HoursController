@@ -3,6 +3,15 @@ import React, { FormEvent, useEffect, useState } from "react";
 import { Paragraph, Table, TableCell, TableRow, TextRun, WidthType, AlignmentType, PatchType, BorderStyle, patchDocument } from "docx";
 
 import { saveAs } from "file-saver";
+import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
+
+const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const monthShortNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const month = monthShortNames[date.getMonth()];
+    return `${day} ${month}`;
+};
 
 //-------------- Tables Headers -------------//
 //Weekly
@@ -281,6 +290,82 @@ const weekendAndHolydayExtraHoursResumeSubHeader: TableRow = new TableRow({
     ],
 });
 
+//Hours Details
+const hoursDetailsHeader: TableRow = new TableRow({
+    children: [
+        new TableCell({
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "NIP/MÓD.", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            verticalAlign: "center",
+            margins: {
+                top: 50,
+                bottom: 50
+            },
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "CATEGORIA/", size: 20, bold: true, font: "Tahoma"}),
+                    new TextRun({break: 1}),
+                    new TextRun({text: "CARREIRA", size: 20, bold: true, font: "Tahoma"})
+                ]
+            })],
+        }),
+        new TableCell({
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "FUNÇÕES", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "NOME", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            verticalAlign: "center",
+            columnSpan: 2,
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "Data", size: 20, bold: false, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "Início", size: 20, bold: false, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "Fim", size: 20, bold: false, font: "Tahoma"}),
+                ]
+            })],
+        }),
+    ],
+});
+
 //-------------- Data ----------------//
 async function generateUsersExtraHoursResume(userInfoExtraHoursResume: UserInfoExtraHoursResume[] | null): Promise<TableRow[]> {
         let workersRows: TableRow[] = [];
@@ -456,6 +541,172 @@ async function generateUsersWeekendAndHolydaysExtraHoursResume(userInfoExtraHour
     return workersRows
 }
 
+async function generateHoursRows(usersHoursData: UserExtraHoursViewModel[] | null): Promise<TableRow[]> {
+    let hoursRows: TableRow[] = [];
+
+    if (usersHoursData === null) return hoursRows;
+
+    usersHoursData.forEach(async user => {
+        user.userHours.forEach(elm => {
+            if (elm.morningStartTime !== null && elm.morningEndTime) {
+                hoursRows.push(
+                    new TableRow({
+                        children: [
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: user.nip, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                margins: {
+                                    top: 50,
+                                    bottom: 50
+                                },
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: user.category, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: user.position, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.LEFT,
+                                    children: [
+                                        new TextRun({text: user.name, size: 20, bold: true, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                columnSpan: 2,
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: formatDate(elm.date), size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: elm.morningStartTime, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: elm.morningEndTime, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                        ],
+                    })
+                );
+            }
+
+            if (elm.afternoonStartTime !== null && elm.afternoonEndTime) {
+                hoursRows.push(
+                    new TableRow({
+                        children: [
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: user.nip, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                margins: {
+                                    top: 50,
+                                    bottom: 50
+                                },
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: user.category, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: user.position, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.LEFT,
+                                    children: [
+                                        new TextRun({text: user.name, size: 20, bold: true, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                columnSpan: 2,
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: formatDate(elm.date), size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: elm.afternoonStartTime, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                            new TableCell({
+                                verticalAlign: "center",
+                                children: [new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({text: elm.afternoonEndTime, size: 20, bold: false, font: "Arial"}),
+                                    ]
+                                })],
+                            }),
+                        ],
+                    })
+                );
+            }
+        })
+    })
+
+    return hoursRows
+}
+
 const ExportHoursDocument: React.FC = () => {
     const [years, setYears] = useState<number[]>([]);
 
@@ -484,6 +735,8 @@ const ExportHoursDocument: React.FC = () => {
         let test: UserInfoExtraHoursResume[] = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersMonthlyExtraHoursReport", yearElement.value, monthElement.value) as UserInfoExtraHoursResume[];
         console.log("TEST:", test);
 
+        const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", yearElement.value, monthElement.value) as UserExtraHoursViewModel[];
+
         //Weekly Workers Resume Table
         let weeklyWorkersResumeTable: TableRow[] = [];
         weeklyWorkersResumeTable.push(weeklyExtraHoursResumeHeader);
@@ -497,6 +750,12 @@ const ExportHoursDocument: React.FC = () => {
         specialDaysWorkersResumeTable.push(weekendAndHolydayExtraHoursResumeSubHeader);
         let specialDaysUsersExtraHoursDataRows: TableRow[] = await generateUsersWeekendAndHolydaysExtraHoursResume(test);
         specialDaysWorkersResumeTable = [...specialDaysWorkersResumeTable, ...specialDaysUsersExtraHoursDataRows];
+
+        //All users hours details Table
+        let hoursDetailsTable: TableRow[] = [];
+        hoursDetailsTable.push(hoursDetailsHeader)
+        let userHoursRowsLoad: TableRow[] = await generateHoursRows(usersHours);
+        hoursDetailsTable = [...hoursDetailsTable, ...userHoursRowsLoad]
 
         patchDocument(document, {
             patches: {
@@ -528,7 +787,7 @@ const ExportHoursDocument: React.FC = () => {
                                     right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
                                 new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
                                     right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
-                                /*...hoursRows*/
+                                ...hoursDetailsTable
                             ],
                         })
                     ],
