@@ -11,11 +11,11 @@ export class UserExtraHoursRow implements IUsersExtraHoursRow {
     morningEndTime: string | null;
     afternoonStartTime: string | null;
     afternoonEndTime: string | null;
-    dayType: number;
+    dayTypeID: number;
     extraHours: number;
 
     constructor(date: string, userID: number, number: string, category: string, position: string, name: string, morningStartTime: string | null,
-        morningEndTime: string | null, afternoonStartTime: string | null, afternoonEndTime: string | null, dayType: number, extraHours: number
+        morningEndTime: string | null, afternoonStartTime: string | null, afternoonEndTime: string | null, dayTypeID: number, extraHours: number
     ) {
         this.date = date;
         this.userId = userID;
@@ -27,7 +27,7 @@ export class UserExtraHoursRow implements IUsersExtraHoursRow {
         this.morningEndTime = morningEndTime;
         this.afternoonStartTime = afternoonStartTime;
         this.afternoonEndTime = afternoonEndTime;
-        this.dayType = dayType;
+        this.dayTypeID = dayTypeID;
         this.extraHours = extraHours;
     }
 }

@@ -4,6 +4,7 @@ import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursRes
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
 import { ipcMain } from "electron";
+import { saveAs } from "file-saver";
 import * as fs from "fs";
 
 export function registHoursRoutes(routeName: string) {
@@ -72,5 +73,10 @@ export function registHoursRoutes(routeName: string) {
     ipcMain.handle(routeName + '/getAllUsersMonthlyExtraHoursReport', async (_event, year: string, month: string): Promise<any> => {
         const result = await getAllUsersMonthlyExtraHoursReport(year, month);
         return result
+    });
+
+    ipcMain.handle(routeName + '/exportDocument', async (_event, generatedDocument: Uint8Array): Promise<any> => {
+        const blob = new Blob([generatedDocument], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+        saveAs(blob, `Horas_Suplementares_${123456}.docx`);
     });
 }

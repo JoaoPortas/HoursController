@@ -32,3 +32,7 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 ```
+
+# After run the command for `npm run build:win`
+Copy the content inside /resources/resources folder to the previous one, the /resource. If this isn't do when exporting the hours report will not
+work because of template files are not in the correct path.

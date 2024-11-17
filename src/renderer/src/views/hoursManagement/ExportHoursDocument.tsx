@@ -714,7 +714,7 @@ const ExportHoursDocument: React.FC = () => {
         (new Date().getMonth() + 1).toString().padStart(2, '0')
     );
 
-    const [month, setMonth] = useState<string>("");
+    //const [month, _setMonth] = useState<string>("");
 
     const generateDocument = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -757,7 +757,7 @@ const ExportHoursDocument: React.FC = () => {
         let userHoursRowsLoad: TableRow[] = await generateHoursRows(usersHours);
         hoursDetailsTable = [...hoursDetailsTable, ...userHoursRowsLoad]
 
-        patchDocument(document, {
+        let generatedDocument: Uint8Array = await patchDocument(document, {
             patches: {
                 month: {
                     type: PatchType.PARAGRAPH,
@@ -820,26 +820,11 @@ const ExportHoursDocument: React.FC = () => {
                     type: PatchType.PARAGRAPH,
                     children: [new TextRun({text: "Especialidade", font: "Times New Roman", size: 20})],
                 },
-                /*hours_table: {
-                    type: PatchType.DOCUMENT,
-                    children: [
-                        new Table({
-                            width: {
-                                type: WidthType.PERCENTAGE,
-                                size: 111
-                            },
-                            rows: hoursRows
-                        })
-                    ],
-                },*/
             },
-        }).then((doc) => {
-            const blob = new Blob([doc], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-            saveAs(blob, `Horas_Suplementares_${month}.docx`);
-            /*Packer.toBlob(doc).then(blob => {
-                saveAs(blob, `Horas_Suplementares_${month}.docx`);
-            });*/
         });
+
+        const blob = new Blob([generatedDocument], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+        saveAs(blob, `Horas_Suplementares_${123456}.docx`);
     };
 
     useEffect(() => {
@@ -855,6 +840,7 @@ const ExportHoursDocument: React.FC = () => {
     return (
         <>
             <main>
+            <h1>Gerar Relatório de Horas</h1>
             <form onSubmit={generateDocument} style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
                     <div className="col-12">
                         <label className="visually-hidden">Ano</label>
@@ -888,18 +874,9 @@ const ExportHoursDocument: React.FC = () => {
                     </div>
 
                     <div className="col-12">
-                        <button type="submit" className="btn btn-primary">Procurar</button>
+                        <button type="submit" className="btn btn-primary">Gerar Relatório</button>
                     </div>
                 </form>
-
-                <h1>Exportar documento word com as horas para o mês X</h1>
-                <input
-                    type="text"
-                    value={month}
-                    onChange={(e) => setMonth(e.target.value)}
-                    placeholder="Insira o mês"
-                />
-                {/*<button onClick={generateDocument}>Exportar Documento</button>*/}
             </main>
         </>
     );
