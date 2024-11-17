@@ -383,8 +383,6 @@ export async function getUserExtraHoursByYearAndMonth(userID: number, year: stri
 
 export async function getUsersIDsWithExtraHoursInYearAndMonth(year: string, month: string): Promise<number[]> {
     return new Promise((resolve, reject) => {
-        let usersIDs: number[] = [];
-
         db.serialize(() => {
             const sql: string = `
                 SELECT DISTINCT(userId) FROM vExtraHoursResume

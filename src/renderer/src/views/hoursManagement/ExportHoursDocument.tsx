@@ -1,4 +1,460 @@
+import { UserInfoExtraHoursResume } from "@shared/models/hours/userInfoExtraHoursResume.model";
 import React, { FormEvent, useEffect, useState } from "react";
+import { Paragraph, Table, TableCell, TableRow, TextRun, WidthType, AlignmentType, PatchType, BorderStyle, patchDocument } from "docx";
+
+import { saveAs } from "file-saver";
+
+//-------------- Tables Headers -------------//
+//Weekly
+const weeklyExtraHoursResumeHeader: TableRow = new TableRow({
+    children: [
+        new TableCell({
+
+            verticalAlign: "center",
+            columnSpan: 4,
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "FUNCIONÁRIO", size: 20, bold: true, font: "Tahoma"})
+                ]
+            })],
+        }),
+        new TableCell({
+
+            margins: {
+                top: 250,
+                bottom: 250
+            },
+            columnSpan: 4,
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "HORAS", size: 20, bold: true, font: "Tahoma"}),
+                    new TextRun({break: 1}),
+                    new TextRun({text: "EFECTUADAS", size: 20, bold: true, font: "Tahoma"}),
+                    new TextRun({break: 1}),
+                    new TextRun({text: "(Semana)", size: 20, bold: true, font: "Tahoma"})
+                ]
+            })],
+        }),
+    ],
+});
+
+const weeklyExtraHoursResumeSubHeader: TableRow = new TableRow({
+    children: [
+        new TableCell({
+            verticalAlign: "center",
+            width: {
+                type: WidthType.PERCENTAGE,
+                size: 10
+            },
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "NIP/MÓD.", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.PERCENTAGE,
+                size: 15
+            },
+            verticalAlign: "center",
+            margins: {
+                top: 50,
+                bottom: 50
+            },
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "CATEGORIA/", size: 20, bold: true, font: "Tahoma"}),
+                    new TextRun({break: 1}),
+                    new TextRun({text: "CARREIRA", size: 20, bold: true, font: "Tahoma"})
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.PERCENTAGE,
+                size: 20
+            },
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "FUNÇÕES", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.PERCENTAGE,
+                size: 20
+            },
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "NOME", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.DXA,
+                size: 10
+            },
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "125%", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.DXA,
+                size: 10
+            },
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "137,5%", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.DXA,
+                size: 10
+            },
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "150%", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.DXA,
+                size: 10
+            },
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "175%", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+    ],
+});
+
+//Weekend and Holydays
+const weekendAndHolydayExtraHoursResumeHeader: TableRow = new TableRow({
+        children: [
+            new TableCell({
+
+                verticalAlign: "center",
+                columnSpan: 4,
+                children: [new Paragraph({
+                    alignment: AlignmentType.CENTER,
+                    children: [
+                        new TextRun({text: "FUNCIONÁRIO", size: 20, bold: true, font: "Tahoma"})
+                    ]
+                })],
+            }),
+            new TableCell({
+
+                margins: {
+                    top: 250,
+                    bottom: 250
+                },
+                columnSpan: 4,
+                children: [new Paragraph({
+                    alignment: AlignmentType.CENTER,
+                    children: [
+                        new TextRun({text: "HORAS", size: 20, bold: true, font: "Tahoma"}),
+                        new TextRun({break: 1}),
+                        new TextRun({text: "EFECTUADAS", size: 20, bold: true, font: "Tahoma"}),
+                        new TextRun({break: 1}),
+                        new TextRun({text: "(Fins-de-semana e feriados)", size: 20, bold: true, font: "Tahoma"})
+                    ]
+                })],
+            }),
+        ],
+});
+
+const weekendAndHolydayExtraHoursResumeSubHeader: TableRow = new TableRow({
+    children: [
+        new TableCell({
+            verticalAlign: "center",
+            width: {
+                type: WidthType.PERCENTAGE,
+                size: 10
+            },
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "NIP/MÓD.", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.PERCENTAGE,
+                size: 15
+            },
+            verticalAlign: "center",
+            margins: {
+                top: 50,
+                bottom: 50
+            },
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "CATEGORIA/", size: 20, bold: true, font: "Tahoma"}),
+                    new TextRun({break: 1}),
+                    new TextRun({text: "CARREIRA", size: 20, bold: true, font: "Tahoma"})
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.PERCENTAGE,
+                size: 20
+            },
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "FUNÇÕES", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.PERCENTAGE,
+                size: 25
+            },
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "NOME", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.DXA,
+                size: 22.5
+            },
+            columnSpan: 2,
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "150%", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+        new TableCell({
+            width: {
+                type: WidthType.DXA,
+                size: 22.5
+            },
+            columnSpan: 2,
+            verticalAlign: "center",
+            children: [new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({text: "200%", size: 20, bold: true, font: "Tahoma"}),
+                ]
+            })],
+        }),
+    ],
+});
+
+//-------------- Data ----------------//
+async function generateUsersExtraHoursResume(userInfoExtraHoursResume: UserInfoExtraHoursResume[] | null): Promise<TableRow[]> {
+        let workersRows: TableRow[] = [];
+
+        if (userInfoExtraHoursResume === null) {
+            return workersRows;
+        }
+
+        userInfoExtraHoursResume.forEach((info: UserInfoExtraHoursResume) => {
+            workersRows.push(
+                new TableRow({
+                    children: [
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: info.number, size: 20, bold: false, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            margins: {
+                                top: 50,
+                                bottom: 50
+                            },
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: info.category, size: 20, bold: false, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: info.position, size: 20, bold: false, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.LEFT,
+                                children: [
+                                    new TextRun({text: info.name, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor25}`, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor37Dot5}`, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor50}`, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                        new TableCell({
+                            verticalAlign: "center",
+                            children: [new Paragraph({
+                                alignment: AlignmentType.CENTER,
+                                children: [
+                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor75}`, size: 20, bold: true, font: "Arial"}),
+                                ]
+                            })],
+                        }),
+                    ],
+                }),
+            )
+        })
+
+        return workersRows
+}
+
+async function generateUsersWeekendAndHolydaysExtraHoursResume(userInfoExtraHoursResume: UserInfoExtraHoursResume[] | null): Promise<TableRow[]> {
+    let workersRows: TableRow[] = [];
+
+    if (userInfoExtraHoursResume === null) {
+        return workersRows;
+    }
+
+    userInfoExtraHoursResume.forEach((info: UserInfoExtraHoursResume) => {
+        workersRows.push(
+            new TableRow({
+                children: [
+                    new TableCell({
+                        verticalAlign: "center",
+                        children: [new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                                new TextRun({text: info.number, size: 20, bold: false, font: "Arial"}),
+                            ]
+                        })],
+                    }),
+                    new TableCell({
+                        verticalAlign: "center",
+                        margins: {
+                            top: 50,
+                            bottom: 50
+                        },
+                        children: [new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                                new TextRun({text: info.category, size: 20, bold: false, font: "Arial"}),
+                            ]
+                        })],
+                    }),
+                    new TableCell({
+                        verticalAlign: "center",
+                        children: [new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                                new TextRun({text: info.position, size: 20, bold: false, font: "Arial"}),
+                            ]
+                        })],
+                    }),
+                    new TableCell({
+                        verticalAlign: "center",
+                        children: [new Paragraph({
+                            alignment: AlignmentType.LEFT,
+                            children: [
+                                new TextRun({text: info.name, size: 20, bold: true, font: "Arial"}),
+                            ]
+                        })],
+                    }),
+                    new TableCell({
+                        verticalAlign: "center",
+                        columnSpan: 2,
+                        children: [new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                                new TextRun({text: `${info.userExtraHoursResume.hoursFor50HolyDays}`, size: 20, bold: true, font: "Arial"}),
+                            ]
+                        })],
+                    }),
+                    new TableCell({
+                        verticalAlign: "center",
+                        columnSpan: 2,
+                        children: [new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                                new TextRun({text: `${info.userExtraHoursResume.hoursFor100HolyDays}`, size: 20, bold: true, font: "Arial"}),
+                            ]
+                        })],
+                    }),
+                ],
+            }),
+        )
+    })
+
+    return workersRows
+}
 
 const ExportHoursDocument: React.FC = () => {
     const [years, setYears] = useState<number[]>([]);
@@ -20,13 +476,111 @@ const ExportHoursDocument: React.FC = () => {
         yearElement = form.elements.namedItem("year") as HTMLInputElement;
         monthElement = form.elements.namedItem("month") as HTMLInputElement;
 
-        /*let document = await await window.electron.ipcRenderer.invoke(
+        let document = await window.electron.ipcRenderer.invoke(
             "read-file", './resources/template_' + 'female' +'.docx'
-        )*/
+        )
 
         //let test = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserMonthlyExtraHoursReport", 1, yearElement.value, monthElement.value);
-        let test = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersMonthlyExtraHoursReport", yearElement.value, monthElement.value);
+        let test: UserInfoExtraHoursResume[] = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersMonthlyExtraHoursReport", yearElement.value, monthElement.value) as UserInfoExtraHoursResume[];
         console.log("TEST:", test);
+
+        //Weekly Workers Resume Table
+        let weeklyWorkersResumeTable: TableRow[] = [];
+        weeklyWorkersResumeTable.push(weeklyExtraHoursResumeHeader);
+        weeklyWorkersResumeTable.push(weeklyExtraHoursResumeSubHeader);
+        let weeklyUsersExtraHoursDataRows: TableRow[] = await generateUsersExtraHoursResume(test);
+        weeklyWorkersResumeTable = [...weeklyWorkersResumeTable, ...weeklyUsersExtraHoursDataRows];
+
+        //Weekends And HolyDays Resume Table
+        let specialDaysWorkersResumeTable: TableRow[] = [];
+        specialDaysWorkersResumeTable.push(weekendAndHolydayExtraHoursResumeHeader);
+        specialDaysWorkersResumeTable.push(weekendAndHolydayExtraHoursResumeSubHeader);
+        let specialDaysUsersExtraHoursDataRows: TableRow[] = await generateUsersWeekendAndHolydaysExtraHoursResume(test);
+        specialDaysWorkersResumeTable = [...specialDaysWorkersResumeTable, ...specialDaysUsersExtraHoursDataRows];
+
+        patchDocument(document, {
+            patches: {
+                month: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "JANEIRO", bold: true, size: 22})],
+                },
+                workers_table: {
+                    type: PatchType.DOCUMENT,
+                    children: [
+                        new Table({
+                            width: {
+                                type: WidthType.PERCENTAGE,
+                                size: 111
+                            },
+                            rows: [
+                                ...weeklyWorkersResumeTable,
+                                new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
+                                    right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
+                                new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
+                                    right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
+                                ...specialDaysWorkersResumeTable,
+                                //Dados
+                                new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
+                                    right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
+                                new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
+                                    right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
+                                new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
+                                    right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
+                                new TableRow({children: [new TableCell({borders: {top: {style: BorderStyle.NIL, size: 0, }, bottom: { style: BorderStyle.NIL,size: 0,},
+                                    right: {style: BorderStyle.NIL,size: 0,},left: {style: BorderStyle.NIL,size: 0,}},children: [new Paragraph("")],}),],}),
+                                /*...hoursRows*/
+                            ],
+                        })
+                    ],
+                },
+                indicative: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "O"})],
+                },
+                sub_day: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "30"})],
+                },
+                sub_month: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "JANEIRO"})],
+                },
+                sub_year: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "2020"})],
+                },
+                capitans_name: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "Nome do cap.", font: "Times New Roman", size: 24})],
+                },
+                patent: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "Patente", font: "Times New Roman", size: 20})],
+                },
+                expertise: {
+                    type: PatchType.PARAGRAPH,
+                    children: [new TextRun({text: "Especialidade", font: "Times New Roman", size: 20})],
+                },
+                /*hours_table: {
+                    type: PatchType.DOCUMENT,
+                    children: [
+                        new Table({
+                            width: {
+                                type: WidthType.PERCENTAGE,
+                                size: 111
+                            },
+                            rows: hoursRows
+                        })
+                    ],
+                },*/
+            },
+        }).then((doc) => {
+            const blob = new Blob([doc], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+            saveAs(blob, `Horas_Suplementares_${month}.docx`);
+            /*Packer.toBlob(doc).then(blob => {
+                saveAs(blob, `Horas_Suplementares_${month}.docx`);
+            });*/
+        });
     };
 
     useEffect(() => {
