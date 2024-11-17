@@ -722,10 +722,10 @@ const ExportHoursDocument: React.FC = () => {
         const form: HTMLFormElement = event.target as HTMLFormElement
 
         let yearElement: HTMLInputElement;
-        let monthElement: HTMLInputElement
+        let monthElement: HTMLSelectElement
 
         yearElement = form.elements.namedItem("year") as HTMLInputElement;
-        monthElement = form.elements.namedItem("month") as HTMLInputElement;
+        monthElement = form.elements.namedItem("month") as HTMLSelectElement;
 
         let document = await window.electron.ipcRenderer.invoke(
             "read-file", './resources/template_' + 'female' +'.docx'
@@ -761,7 +761,7 @@ const ExportHoursDocument: React.FC = () => {
             patches: {
                 month: {
                     type: PatchType.PARAGRAPH,
-                    children: [new TextRun({text: "JANEIRO", bold: true, size: 22})],
+                    children: [new TextRun({text: monthElement.options[monthElement.selectedIndex].text, bold: true, size: 22, allCaps: true})],
                 },
                 workers_table: {
                     type: PatchType.DOCUMENT,
@@ -824,7 +824,7 @@ const ExportHoursDocument: React.FC = () => {
         });
 
         const blob = new Blob([generatedDocument], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-        saveAs(blob, `Horas_Suplementares_${123456}.docx`);
+        saveAs(blob, `Horas_Suplementares_${monthElement.options[monthElement.selectedIndex].text}.docx`);
     };
 
     useEffect(() => {
