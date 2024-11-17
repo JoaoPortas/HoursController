@@ -321,12 +321,13 @@ export async function getUserTotalHoursExcludingMonthByYear(userID:number, year:
     return new Promise((resolve, reject) => {
         db.serialize(() => {
             const sql: string = `
-                SELECT strftime('%Y', date) AS 'Year', SUM(extraHours) AS 'Total' FROM vExtraHoursResume WHERE userID = ? AND Year = ? AND strftime('%m', date) != ?
+                SELECT COALESCE(strftime('%Y', date), ?) AS 'Year', COALESCE(SUM(extraHours), 0) AS 'Total' FROM vExtraHoursResume WHERE userID = ? AND Year = ? AND strftime('%m', date) NOT BETWEEN ? AND '12'
             `
 
             const stmt: Statement = db.prepare(sql);
 
-            stmt.get(userID,
+            stmt.get(year,
+                userID,
                 year,
                 excludedMonth,
                 (err: Error | null, row : { Year: string, Total: number }) => {
@@ -336,10 +337,78 @@ export async function getUserTotalHoursExcludingMonthByYear(userID:number, year:
                         return;
                     }
 
-                    console.log(row);
+                    //console.log(row);
 
                     resolve(row.Total)
             });
+        })
+    })
+}
+
+export async function getUserExtraHoursByYearAndMonth(userID: number, year: string, month: string): Promise<IBaseExtraHoursRegist[] | null> {
+    return new Promise((resolve, reject) => {
+        let userHours: IBaseExtraHoursRegist[] = [];
+
+        db.serialize(() => {
+            const sql: string = `
+                SELECT date, userId, morningStartTime, morningEndTime, afternoonStartTime, afternoonEndTime, strftime('%Y', date) AS 'Year', strftime('%m', date) AS 'Month', dayTypeID, extraHours
+                FROM vUsersExtraHoursRows
+                WHERE userId = ? AND Month = ? AND Year = ? ORDER BY number ASC, date ASC
+            `
+
+            const stmt: Statement = db.prepare(sql);
+
+            stmt.all(
+                userID,
+                month,
+                year,
+                (err: Error | null, rows : Array<IUsersExtraHoursRow>) => {
+                    if (err) {
+                        console.error("Failed to fetching user extra hours from database: ", err.message)
+                        reject(err)
+                        return;
+                    }
+
+                    rows.forEach((row: IUsersExtraHoursRow) => {
+                        userHours.push(new BaseExtraHoursRegist(row.date, row.userId, row.morningStartTime, row.morningEndTime, row.afternoonStartTime, row.afternoonEndTime, row.dayTypeID, row.extraHours))
+                    })
+
+                    resolve(userHours)
+            });
+
+
+        })
+    })
+}
+
+export async function getUsersIDsWithExtraHoursInYearAndMonth(year: string, month: string): Promise<number[]> {
+    return new Promise((resolve, reject) => {
+        let usersIDs: number[] = [];
+
+        db.serialize(() => {
+            const sql: string = `
+                SELECT DISTINCT(userId) FROM vExtraHoursResume
+                WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ?
+            `
+
+            const stmt: Statement = db.prepare(sql);
+
+            stmt.all(
+                year,
+                month,
+                (err: Error | null, rows: { userID: number }[]) => {
+                    if (err) {
+                        console.error("Failed to fetching user IDs with extra hours in month and year from database: ", err.message)
+                        reject(err)
+                        return;
+                    }
+
+                    // Map the userId values from rows
+                    const usersIDs = rows.map((row) => row.userID);
+                    resolve(usersIDs);
+            });
+
+
         })
     })
 }

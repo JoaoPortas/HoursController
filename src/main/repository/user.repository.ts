@@ -121,13 +121,13 @@ export async function authenticateUser(userAuth: IUserAuth): Promise<number | nu
     })
 }
 
-/*export async function getUserById(userId:number): Promise<IUser | null> {
-    /*console.log("Repository: Getting the user by ID" + userId)
+export async function getUserById(userId:number): Promise<IUser | null> {
+    //console.log("Repository: Getting the user by ID" + userId)
 
-    const stmt: Statement = db.prepare('SELECT userId, number, name FROM users WHERE userId = ?');
+    const stmt: Statement = db.prepare('SELECT userId, username, number, name, category, position FROM users WHERE userId = ?');
 
     return new Promise<IUser | null>((resolve, reject) => {
-        stmt.get(userId, (err: Error | null, row : {userId: number, number: string, name: string}) => {
+        stmt.get(userId, (err: Error | null, row : User) => {
             if (err) {
                 console.error(err.message);
                 reject(err)
@@ -135,7 +135,7 @@ export async function authenticateUser(userAuth: IUserAuth): Promise<number | nu
             }
 
             if (row !== undefined) {
-                const userFound: IUser | null = new User(row.userId, row.number, row.name)
+                const userFound: IUser | null = new User(row.userId, row.username, row.number, row.name, row.category, row.position)
                 resolve(userFound)
             }
             else {
@@ -144,4 +144,4 @@ export async function authenticateUser(userAuth: IUserAuth): Promise<number | nu
         });
     })
    return null
-}*/
+}

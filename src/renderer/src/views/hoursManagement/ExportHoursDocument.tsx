@@ -1,4 +1,101 @@
-import React, { useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
+
+const ExportHoursDocument: React.FC = () => {
+    const [years, setYears] = useState<number[]>([]);
+
+    const [currentMonth, _setCurrentMonth] = useState<string>(
+        (new Date().getMonth() + 1).toString().padStart(2, '0')
+    );
+
+    const [month, setMonth] = useState<string>("");
+
+    const generateDocument = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const form: HTMLFormElement = event.target as HTMLFormElement
+
+        let yearElement: HTMLInputElement;
+        let monthElement: HTMLInputElement
+
+        yearElement = form.elements.namedItem("year") as HTMLInputElement;
+        monthElement = form.elements.namedItem("month") as HTMLInputElement;
+
+        /*let document = await await window.electron.ipcRenderer.invoke(
+            "read-file", './resources/template_' + 'female' +'.docx'
+        )*/
+
+        //let test = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserMonthlyExtraHoursReport", 1, yearElement.value, monthElement.value);
+        let test = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersMonthlyExtraHoursReport", yearElement.value, monthElement.value);
+        console.log("TEST:", test);
+    };
+
+    useEffect(() => {
+        // Generate years from 2023 to current year
+        const currentYear = new Date().getFullYear();
+        const yearsArray: number[] = [];
+        for (let year = currentYear; year >= 2023; year--) {
+            yearsArray.push(year);
+        }
+        setYears(yearsArray);
+    }, []);
+
+    return (
+        <>
+            <main>
+            <form onSubmit={generateDocument} style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
+                    <div className="col-12">
+                        <label className="visually-hidden">Ano</label>
+                        <select className="form-select" id="year" name="year">
+                            <option disabled>Ano</option>
+                            {years.map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="col-12">
+                        <label className="visually-hidden">Preference</label>
+                        <select className="form-select" id="month" name="month" defaultValue={currentMonth}>
+                            <option disabled>Mês</option>
+                            <option value="01">Janeiro</option>
+                            <option value="02">Fevereiro</option>
+                            <option value="03">Março</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Maio</option>
+                            <option value="06">Junho</option>
+                            <option value="07">Julho</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                        </select>
+                    </div>
+
+                    <div className="col-12">
+                        <button type="submit" className="btn btn-primary">Procurar</button>
+                    </div>
+                </form>
+
+                <h1>Exportar documento word com as horas para o mês X</h1>
+                <input
+                    type="text"
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    placeholder="Insira o mês"
+                />
+                {/*<button onClick={generateDocument}>Exportar Documento</button>*/}
+            </main>
+        </>
+    );
+}
+
+export default ExportHoursDocument;
+
+//------------------- Old code ------------------------//
+/*import React, { FormEvent, useEffect, useState } from "react";
 import { Paragraph, Table, TableCell, TableRow, TextRun, WidthType, AlignmentType, PatchType, BorderStyle } from "docx";
 import { saveAs } from "file-saver";
 import { patchDocument } from "docx";
@@ -34,6 +131,7 @@ const formatDate = (dateString: string): string => {
 };
 
 const ExportHoursDocument: React.FC = () => {
+    const [years, setYears] = useState<number[]>([]);
     const [currentMonth, _setCurrentMonth] = useState<string>(
         (new Date().getMonth() + 1).toString().padStart(2, '0')
     );
@@ -42,8 +140,11 @@ const ExportHoursDocument: React.FC = () => {
 
     const userHoursStats: UserHours[] = [];
 
+    let yearElement: HTMLInputElement;
+    let monthElement: HTMLInputElement
+
     async function calculateHours(elm: UserExtraHoursViewModel) {
-        let fetchTotal = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserTotalHoursExcludingMonthByYear", elm.userID, '2024', /*currentMonth*/'08');
+        let fetchTotal = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserTotalHoursExcludingMonthByYear", elm.userID, yearElement.value, /*currentMonth//monthElement.value);
         let totalHours = +fetchTotal;
         //totalHours = fetchTotal;
         //console.log("total", totalHours);
@@ -140,6 +241,7 @@ const ExportHoursDocument: React.FC = () => {
         let uh: UserHours = { userId: elm.userID, userHours: details }
         userHoursStats.push(uh);
         console.log("Details", details);
+        console.log("Total Excluding current month:", fetchTotal);
     }
 
     async function generateHoursRows(usersHoursData: UserExtraHoursViewModel[] | null): Promise<TableRow[]> {
@@ -149,6 +251,7 @@ const ExportHoursDocument: React.FC = () => {
 
         usersHoursData.forEach(async user => {
             calculateHours(user)
+            console.log("cacl hours", user);
             user.userHours.forEach(elm => {
                 if (elm.morningStartTime !== null && elm.morningEndTime) {
                     hoursRows.push(
@@ -312,7 +415,9 @@ const ExportHoursDocument: React.FC = () => {
     async function generateWorkersRows(usersHoursStatsData: UserHours[]): Promise<TableRow[]> {
         let workersRows: TableRow[] = [];
 
-        usersHoursStatsData.forEach(user => {
+        console.log("Workers Rows", usersHoursStatsData);
+        usersHoursStatsData.forEach((user: UserHours) => {
+            console.log("User: ", user);
             workersRows.push(
                 new TableRow({
                     children: [
@@ -475,12 +580,19 @@ const ExportHoursDocument: React.FC = () => {
         return workersRows
     }
 
-    const generateDocument = async () => {
+    const generateDocument = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const form: HTMLFormElement = event.target as HTMLFormElement
+
+        yearElement = form.elements.namedItem("year") as HTMLInputElement;
+        monthElement = form.elements.namedItem("month") as HTMLInputElement;
+
         let document = await await window.electron.ipcRenderer.invoke(
             "read-file", './resources/template_' + 'female' +'.docx'
         )
 
-        const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", new Date().getFullYear().toString(), /*currentMonth*/'08') as UserExtraHoursViewModel[];
+        const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", /*new Date().getFullYear().toString()//yearElement.value, /*currentMonth//monthElement.value) as UserExtraHoursViewModel[];
         const hoursHeaderRow: TableRow = new TableRow({
             children: [
                 new TableCell({
@@ -924,20 +1036,67 @@ const ExportHoursDocument: React.FC = () => {
                             rows: hoursRows
                         })
                     ],
-                },*/
+                },//
             },
         }).then((doc) => {
             const blob = new Blob([doc], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
             saveAs(blob, `Horas_Suplementares_${month}.docx`);
             /*Packer.toBlob(doc).then(blob => {
                 saveAs(blob, `Horas_Suplementares_${month}.docx`);
-            });*/
+            });//
         });
     };
+
+    useEffect(() => {
+        // Generate years from 2023 to current year
+        const currentYear = new Date().getFullYear();
+        const yearsArray: number[] = [];
+        for (let year = currentYear; year >= 2023; year--) {
+            yearsArray.push(year);
+        }
+        setYears(yearsArray);
+    }, []);
 
     return (
         <>
             <main>
+            <form onSubmit={generateDocument} style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
+                    <div className="col-12">
+                        <label className="visually-hidden">Ano</label>
+                        <select className="form-select" id="year" name="year">
+                            <option disabled>Ano</option>
+                            {years.map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="col-12">
+                        <label className="visually-hidden">Preference</label>
+                        <select className="form-select" id="month" name="month" defaultValue={currentMonth}>
+                            <option disabled>Mês</option>
+                            <option value="01">Janeiro</option>
+                            <option value="02">Fevereiro</option>
+                            <option value="03">Março</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Maio</option>
+                            <option value="06">Junho</option>
+                            <option value="07">Julho</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                        </select>
+                    </div>
+
+                    <div className="col-12">
+                        <button type="submit" className="btn btn-primary">Procurar</button>
+                    </div>
+                </form>
+
                 <h1>Exportar documento word com as horas para o mês X</h1>
                 <input
                     type="text"
@@ -945,10 +1104,10 @@ const ExportHoursDocument: React.FC = () => {
                     onChange={(e) => setMonth(e.target.value)}
                     placeholder="Insira o mês"
                 />
-                <button onClick={generateDocument}>Exportar Documento</button>
+                {/*<button onClick={generateDocument}>Exportar Documento</button>//}
             </main>
         </>
     );
 };
 
-export default ExportHoursDocument;
+export default ExportHoursDocument;*/

@@ -1,4 +1,5 @@
 import { createExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, getUserTotalHoursExcludingMonthByYear, updateExtraHoursRegist } from "@main/repository/extraHours.repository";
+import { getAllUsersMonthlyExtraHoursReport, getUserMonthlyExtraHoursReport } from "@main/services/extraHoursCalculator.service";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
@@ -54,10 +55,22 @@ export function registHoursRoutes(routeName: string) {
     ipcMain.handle(routeName + '/getAllUsersExtraHoursByYearAndMonth', async (_event, year: string, month: string): Promise<UserExtraHoursViewModel[] | null> => {
         const result = await getAllUsersExtraHoursByYearAndMonth(year, month)
         return result
-    })
+    });
 
     ipcMain.handle(routeName + '/getUserTotalHoursExcludingMonthByYear', async (_event, userID: number, year: string, excludedMonth: string): Promise<number | null> => {
         const result = await getUserTotalHoursExcludingMonthByYear(userID, year, excludedMonth)
         return result
-    })
+    });
+
+    //Gives the report of extra hours considerating every hour until the month received.
+    ipcMain.handle(routeName + '/getUserMonthlyExtraHoursReport', async (_event, userID: number, year: string, month: string): Promise<any> => {
+        const result = await getUserMonthlyExtraHoursReport(userID, year, month);
+        return result
+    });
+
+    //Gives the report of extra hours considerating every hour until the month received for all users with extra hours in the indicated year and month.
+    ipcMain.handle(routeName + '/getAllUsersMonthlyExtraHoursReport', async (_event, year: string, month: string): Promise<any> => {
+        const result = await getAllUsersMonthlyExtraHoursReport(year, month);
+        return result
+    });
 }
