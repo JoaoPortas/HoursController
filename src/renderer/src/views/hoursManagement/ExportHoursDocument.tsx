@@ -713,6 +713,7 @@ const ExportHoursDocument: React.FC = () => {
     const handleCheckboxEditReportMetadata = () => {
         setEditReportMetada(!editReportMetadata);
     };
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [years, setYears] = useState<number[]>([]);
     const [currentMonth, _setCurrentMonth] = useState<string>(
         (new Date().getMonth() + 1).toString().padStart(2, '0')
@@ -830,6 +831,8 @@ const ExportHoursDocument: React.FC = () => {
     };
 
     function saveReportMetadata() {
+        setIsLoading(true);
+
         let patent: HTMLInputElement = document.getElementById("patent") as HTMLInputElement;
         let capitansName: HTMLInputElement = document.getElementById("capitansName") as HTMLInputElement;
         let capitansGender: HTMLSelectElement = document.getElementById("capitansGender") as HTMLSelectElement;
@@ -841,6 +844,8 @@ const ExportHoursDocument: React.FC = () => {
         reportMetadataCheckbox.checked = false;
 
         toast.success("Novas informações guardadas!");
+
+        setIsLoading(false);
     }
 
     function loadReportMetadata() {
@@ -910,7 +915,7 @@ const ExportHoursDocument: React.FC = () => {
                         </div>
 
                         <div className="col-12">
-                            <button type="submit" className="btn btn-primary">Gerar Relatório</button>
+                            <button type="submit" className="btn btn-primary" disabled={isLoading}>Gerar Relatório</button>
                         </div>
                     </div>
                     <div id="collapseSettings" style={{marginTop: '20px', marginBottom: '20px', width: "60%", minWidth: "300px", maxWidth: "700px"}} className="row g-3 collapse">
