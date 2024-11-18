@@ -60,6 +60,9 @@ const Navbar: React.FC = () => {
                   <li><Link className="dropdown-item" to="/hoursManagement/export">Exportar Documento</Link></li>
                 </ul>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link active" aria-current="page" to="/disclaimer">Disclaimer</Link>
+              </li>
             </ul>
             {/*<form className="d-flex mt-3 mt-lg-0" role="search">
                       <input
