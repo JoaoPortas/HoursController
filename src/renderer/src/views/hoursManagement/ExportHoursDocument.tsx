@@ -840,41 +840,81 @@ const ExportHoursDocument: React.FC = () => {
     return (
         <>
             <main>
-            <h1>Gerar Relatório de Horas</h1>
-            <form onSubmit={generateDocument} style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
-                    <div className="col-12">
-                        <label className="visually-hidden">Ano</label>
-                        <select className="form-select" id="year" name="year">
-                            <option disabled>Ano</option>
-                            {years.map((year) => (
-                                <option key={year} value={year}>
-                                    {year}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                <div style={{display: "flex", alignItems: "center"}}>
+                    <h1>Gerar Relatório de Horas</h1>
+                    <button style={{marginLeft: "15px"}} className="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSettings" aria-expanded="false" aria-controls="collapseSettings">
+                        Settings
+                    </button>
+                </div>
+                <form onSubmit={generateDocument} >
+                    <div style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
+                        <div className="col-12">
+                            <label className="visually-hidden">Ano</label>
+                            <select className="form-select" id="year" name="year">
+                                <option disabled>Ano</option>
+                                {years.map((year) => (
+                                    <option key={year} value={year}>
+                                        {year}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
 
-                    <div className="col-12">
-                        <label className="visually-hidden">Preference</label>
-                        <select className="form-select" id="month" name="month" defaultValue={currentMonth}>
-                            <option disabled>Mês</option>
-                            <option value="01">Janeiro</option>
-                            <option value="02">Fevereiro</option>
-                            <option value="03">Março</option>
-                            <option value="04">Abril</option>
-                            <option value="05">Maio</option>
-                            <option value="06">Junho</option>
-                            <option value="07">Julho</option>
-                            <option value="08">Agosto</option>
-                            <option value="09">Setembro</option>
-                            <option value="10">Outubro</option>
-                            <option value="11">Novembro</option>
-                            <option value="12">Dezembro</option>
-                        </select>
-                    </div>
+                        <div className="col-12">
+                            <label className="visually-hidden">Preference</label>
+                            <select className="form-select" id="month" name="month" defaultValue={currentMonth}>
+                                <option disabled>Mês</option>
+                                <option value="01">Janeiro</option>
+                                <option value="02">Fevereiro</option>
+                                <option value="03">Março</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Maio</option>
+                                <option value="06">Junho</option>
+                                <option value="07">Julho</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Setembro</option>
+                                <option value="10">Outubro</option>
+                                <option value="11">Novembro</option>
+                                <option value="12">Dezembro</option>
+                            </select>
+                        </div>
 
-                    <div className="col-12">
-                        <button type="submit" className="btn btn-primary">Gerar Relatório</button>
+                        <div className="col-12">
+                            <button type="submit" className="btn btn-primary">Gerar Relatório</button>
+                        </div>
+                    </div>
+                    <div id="collapseSettings" style={{marginTop: '20px', marginBottom: '20px', width: "60%", minWidth: "300px", maxWidth: "700px"}} className="row g-3 collapse">
+                        <h4>Configurações</h4>
+                        <div className="row mb-3">
+                            <label htmlFor="capitansName" className="col-sm-4 col-form-label">Patente</label>
+                            <div className="col-sm-8">
+                                <input type="text" className="form-control" id="capitansName" name="capitansName"/>
+                            </div>
+                        </div>
+                        <div className="row mb-3">
+                            <label htmlFor="capitansName" className="col-sm-4 col-form-label">Nome do Capitão</label>
+                            <div className="col-sm-8">
+                                <input type="text" className="form-control" id="capitansName" name="capitansName"/>
+                            </div>
+                        </div>
+                        <div className="row mb-3">
+                            <label htmlFor="capitansName" className="col-sm-4 col-form-label">Capitão/Capitã</label>
+                            <div className="col-sm-8">
+                                <input type="text" className="form-control" id="capitansName" name="capitansName"/>
+                            </div>
+                        </div>
+                        <div className="row mb-3">
+                            <label htmlFor="capitansName" className="col-sm-4 col-form-label">Especialidade</label>
+                            <div className="col-sm-8">
+                                <input type="text" className="form-control" id="capitansName" name="capitansName"/>
+                            </div>
+                        </div>
+                        <div className="row mb-3">
+                            <label htmlFor="capitansName" className="col-sm-4 col-form-label">Data</label>
+                            <div className="col-sm-8">
+                                <input type="text" className="form-control" id="capitansName" name="capitansName"/>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </main>
