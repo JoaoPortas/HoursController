@@ -5,6 +5,7 @@ export async function setupDatabase() {
     await setupDayTypes()
     await setupExtraHours()
     //await populate()
+    await setupExtraHoursReportConfigTable();
 
     await createViews()
 }
@@ -131,6 +132,27 @@ export async function createViews() {
 				FROM extraHours e
 				INNER JOIN users AS u ON u.userId = e.userID;`
 )
+}
+
+export async function setupExtraHoursReportConfigTable() {
+    await db.serialize(() => {
+        db.run('CREATE TABLE IF NOT EXISTS reportConfiguration (configID INTEGER PRIMARY KEY AUTOINCREMENT' +
+            ',patent TEXT' +
+            ',commanderName TEXT' +
+            ',commanderGender number' +
+            ',commanderEspeciality TEXT' +
+        ')');
+
+        db.prepare('SELECT COUNT(patent) AS total FROM reportConfiguration').get(
+            (_err: Error | null, row: { total: number }) => {
+                //console.log(row.total)
+
+                if (row.total == 0) {
+                    db.prepare('INSERT INTO reportConfiguration(patent, commanderName, commanderGender, commanderEspeciality) VALUES ("N/A", "N/A", 1, "N/A")').run()
+                }
+            }
+        )
+    })
 }
 
 export async function populate() {

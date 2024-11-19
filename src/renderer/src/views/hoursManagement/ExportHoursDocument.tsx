@@ -14,6 +14,10 @@ const formatDate = (dateString: string): string => {
     return `${day} ${month}`;
 };
 
+//TODO: Replace the 0s in the hours for week days and holydays/weekend by letting empty
+//TODO: Sort the JSON array by nip see https://dev.to/slimpython/sort-array-of-json-object-by-key-value-easily-with-javascript-3hke
+//TODO: Get the last day of an month for an year
+
 //-------------- Tables Headers -------------//
 //Weekly
 const weeklyExtraHoursResumeHeader: TableRow = new TableRow({
@@ -730,8 +734,22 @@ const ExportHoursDocument: React.FC = () => {
         yearElement = form.elements.namedItem("year") as HTMLInputElement;
         monthElement = form.elements.namedItem("month") as HTMLSelectElement;
 
-        let document = await window.electron.ipcRenderer.invoke(
-            "read-file", './resources/template_' + 'female' +'.docx'
+        let patent: HTMLInputElement = document.getElementById("patent") as HTMLInputElement;
+        let capitansName: HTMLInputElement = document.getElementById("capitansName") as HTMLInputElement;
+        let capitansGender: HTMLSelectElement = document.getElementById("capitansGender") as HTMLSelectElement;
+        let especiality: HTMLInputElement = document.getElementById("especiality") as HTMLInputElement;
+
+        let fileGender: string = "";
+        console.log(capitansGender.value);
+        if (capitansGender.value == "1") {
+            fileGender = "male";
+        }
+        else {
+            fileGender = "female"
+        }
+
+        let documentReport = await window.electron.ipcRenderer.invoke(
+            "read-file", './resources/template_' + fileGender +'.docx'
         )
 
         //let test = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserMonthlyExtraHoursReport", 1, yearElement.value, monthElement.value);
@@ -760,7 +778,7 @@ const ExportHoursDocument: React.FC = () => {
         let userHoursRowsLoad: TableRow[] = await generateHoursRows(usersHours);
         hoursDetailsTable = [...hoursDetailsTable, ...userHoursRowsLoad]
 
-        let generatedDocument: Uint8Array = await patchDocument(document, {
+        let generatedDocument: Uint8Array = await patchDocument(documentReport, {
             patches: {
                 month: {
                     type: PatchType.PARAGRAPH,
@@ -813,15 +831,15 @@ const ExportHoursDocument: React.FC = () => {
                 },
                 capitans_name: {
                     type: PatchType.PARAGRAPH,
-                    children: [new TextRun({text: "Nome do cap.", font: "Times New Roman", size: 24})],
+                    children: [new TextRun({text: capitansName.value, font: "Times New Roman", size: 24})],
                 },
                 patent: {
                     type: PatchType.PARAGRAPH,
-                    children: [new TextRun({text: "Patente", font: "Times New Roman", size: 20})],
+                    children: [new TextRun({text: patent.value, font: "Times New Roman", size: 20})],
                 },
                 expertise: {
                     type: PatchType.PARAGRAPH,
-                    children: [new TextRun({text: "Especialidade", font: "Times New Roman", size: 20})],
+                    children: [new TextRun({text: especiality.value, font: "Times New Roman", size: 20})],
                 },
             },
         });
@@ -923,7 +941,7 @@ const ExportHoursDocument: React.FC = () => {
                         <div className="row mb-3">
                             <label htmlFor="capitansName" className="col-sm-4 col-form-label">Data do Documento</label>
                             <div className="col-sm-8">
-                                <input type="date" className="form-control" id="date" name="date" required/>
+                                <input type="date" className="form-control" id="date" name="date"/>
                                 <div className="invalid-feedback">
                                     *Campo de preenchimento obrigatório
                                 </div>
@@ -951,11 +969,11 @@ const ExportHoursDocument: React.FC = () => {
                             </div>
                         </div>
                         <div className="row mb-3">
-                            <label htmlFor="capitansGender" className="col-sm-4 col-form-label">Capitão/Capitã</label>
+                            <label htmlFor="capitansGender" className="col-sm-4 col-form-label">O/A Comandante</label>
                             <div className="col-sm-8">
                                 <select className="form-select" id="capitansGender" name="capitansGender" disabled={!editReportMetadata}>
-                                    <option value={1} selected>Capitão</option>
-                                    <option value={2}>Capitã</option>
+                                    <option value={1} selected>O</option>
+                                    <option value={2}>A</option>
                                 </select>
                                 <div className="invalid-feedback">
                                     *Campo de preenchimento obrigatório
