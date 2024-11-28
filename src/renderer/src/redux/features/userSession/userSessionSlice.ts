@@ -4,13 +4,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 // Is required to export to the typeof store.getState in the store.ts recognize the type and prevent a erro because of the type
 export interface UserSessionState {
   userId: number | null,
-  name: string | null
+  name: string | null,
+  realName: string | null
 }
 
 // Define the initial state using that type
 const initialState: UserSessionState = {
   userId: null,
   name: null,
+  realName: null
 }
 
 export const userSessionSlice = createSlice({
@@ -21,10 +23,12 @@ export const userSessionSlice = createSlice({
     setUserSession: (state, action: PayloadAction<UserSessionState>) => {
         state.userId = action.payload.userId
         state.name = action.payload.name
+        state.realName = action.payload.realName
     },
     clearUserSession: (state) => {
       state.userId = null
       state.name = null
+      state.realName = null
     },
   },
 })

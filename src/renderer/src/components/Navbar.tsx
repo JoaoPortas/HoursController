@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"
 const Navbar: React.FC = () => {
     //const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
     const name: string | null = useSelector((state: RootState) => state.userSession.name)
+    const realName: string | null = useSelector((state: RootState) => state.userSession.realName)
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -76,7 +77,7 @@ const Navbar: React.FC = () => {
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  {name}
+                  {name} | {realName}
                 </a>
 
                 <div className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

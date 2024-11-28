@@ -272,7 +272,7 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>*/}
-                <Link to="/">Go to /</Link>
+                {/*<Link to="/">Go to /</Link>*/}
             </main>
         </>
     )
