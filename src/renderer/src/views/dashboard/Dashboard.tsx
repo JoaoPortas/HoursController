@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 const Dashboard: React.FC = () => {
     const userId = useSelector((state: RootState) => state.userSession.userId)
     const [totalHours, setTotalHours] = useState(0)
+    const [currentYear] = useState<string>(new Date().getFullYear().toString());
     /*const [currentMonth, _setCurrentMonth] = useState<string>(
         (new Date().getMonth() + 1).toString().padStart(2, '0')
     );*/
@@ -185,7 +186,7 @@ const Dashboard: React.FC = () => {
                         <div className="col-6">
                             <div style={{height: "194px"}} className="p-3 gradient-border">
                                 <div className="col">
-                                    <div style={{display: "inline-flex"}}>Horas extra totais (2024): {totalHours} <div style={{fontSize: "0.875em", color: "#6c757d"}}><span style={{verticalAlign: "middle", marginLeft: "5px"}}>/100 horas</span></div></div>
+                                    <div style={{display: "inline-flex"}}>Horas extra totais ({currentYear}): {totalHours} <div style={{fontSize: "0.875em", color: "#6c757d"}}><span style={{verticalAlign: "middle", marginLeft: "5px"}}>/100 horas</span></div></div>
                                 </div>
                                 <div style={{marginTop: "25px"}} className="col">
                                     <div className="progress mx-auto" data-value="14">
@@ -208,7 +209,7 @@ const Dashboard: React.FC = () => {
                             <div style={{height: "194px"}} className="p-3 gradient-border">
                                 <div className="row">
                                     <div className="col">
-                                        <div>Horas por categoria (2024)</div>
+                                        <div>Horas por categoria ({currentYear})</div>
                                     </div>
                                 </div>
                                 <div style={{marginTop: "13px", fontSize: "17px"}} className="row">
@@ -228,7 +229,7 @@ const Dashboard: React.FC = () => {
                             <div style={{height: "194px"}} className="p-3 gradient-border">
                                 <div className="row">
                                     <div className="col">
-                                        <div>Horas de fins-de-semana e feriados (2024)</div>
+                                        <div>Horas de fins-de-semana e feriados ({currentYear})</div>
                                     </div>
                                 </div>
                                 <div style={{marginTop: "13px", fontSize: "17px"}} className="row">
