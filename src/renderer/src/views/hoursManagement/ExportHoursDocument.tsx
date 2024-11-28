@@ -901,7 +901,7 @@ const ExportHoursDocument: React.FC = () => {
                 <div style={{display: "flex", alignItems: "center"}}>
                     <h1>Gerar Relatório de Horas</h1>
                     <button style={{marginLeft: "15px"}} className="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSettings" aria-expanded="false" aria-controls="collapseSettings">
-                        Settings
+                        Configurações
                     </button>
                 </div>
                 <form onSubmit={generateDocument} >

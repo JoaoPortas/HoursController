@@ -178,8 +178,8 @@ const Dashboard: React.FC = () => {
     return (
         <>
             <main>
-                <h1>Dashboard</h1>
-                {userId && <p>Logged in as user ID: {userId}</p>}
+                <h1>Painel de Controlo</h1>
+                {userId && <p>Autenticado com o ID de Utilizador: {userId}</p>}
                 <div className="container text-center">
                     <div className="row g-2">
                         <div className="col-6">

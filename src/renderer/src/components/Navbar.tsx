@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
           <div className="offcanvas-body">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" to="/dashboard">Home</Link>
+                <Link className="nav-link active" aria-current="page" to="/dashboard">Início</Link>
               </li>
               {/*<li className="nav-item">
                 <a className="nav-link" href="#">Link</a>
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
                 </ul>
               </li>
               <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" to="/disclaimer">Disclaimer</Link>
+                <Link className="nav-link active" aria-current="page" to="/disclaimer">Sobre</Link>
               </li>
             </ul>
             {/*<form className="d-flex mt-3 mt-lg-0" role="search">
