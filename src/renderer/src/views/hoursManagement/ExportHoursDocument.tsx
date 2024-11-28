@@ -21,12 +21,22 @@ function getMonthLastDayDate(date: Date): Date {
     return lastDayDate;
 }
 
+function getMonthYearLastDay() {
+    let yearElment: HTMLSelectElement = document.getElementById("year") as HTMLSelectElement;
+    let monthElment: HTMLSelectElement = document.getElementById("month") as HTMLSelectElement;
+
+    let year: number = parseInt(yearElment.value, 10);
+    let month: number = parseInt(monthElment.value, 10);
+    let date: Date = new Date(year, month - 1);
+    let lastDay = getMonthLastDayDate(date).getDate();
+
+    return lastDay;
+}
+
 async function handleReportChangeMonthAndYear() {
     let yearElment: HTMLSelectElement = document.getElementById("year") as HTMLSelectElement;
     let monthElment: HTMLSelectElement = document.getElementById("month") as HTMLSelectElement;
     let dateElement: HTMLInputElement = document.getElementById("date") as HTMLInputElement;
-
-    console.log(yearElment.value + " - " + monthElment.value);
 
     let year: number = parseInt(yearElment.value, 10);
     let month: number = parseInt(monthElment.value, 10);
@@ -38,9 +48,7 @@ async function handleReportChangeMonthAndYear() {
     dateElement.value = isoDate;
 }
 
-//TODO: Replace the 0s in the hours for week days and holydays/weekend by letting empty
 //TODO: Sort the JSON array by nip see https://dev.to/slimpython/sort-array-of-json-object-by-key-value-easily-with-javascript-3hke
-//TODO: Get the last day of an month for an year
 
 //-------------- Tables Headers -------------//
 //Weekly
@@ -452,7 +460,7 @@ async function generateUsersExtraHoursResume(userInfoExtraHoursResume: UserInfoE
                             children: [new Paragraph({
                                 alignment: AlignmentType.CENTER,
                                 children: [
-                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor25}`, size: 20, bold: true, font: "Arial"}),
+                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor25 == 0 ? "" : info.userExtraHoursResume.hoursFor25}`, size: 20, bold: true, font: "Arial"}),
                                 ]
                             })],
                         }),
@@ -461,7 +469,7 @@ async function generateUsersExtraHoursResume(userInfoExtraHoursResume: UserInfoE
                             children: [new Paragraph({
                                 alignment: AlignmentType.CENTER,
                                 children: [
-                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor37Dot5}`, size: 20, bold: true, font: "Arial"}),
+                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor37Dot5 == 0 ? "" : info.userExtraHoursResume.hoursFor37Dot5}`, size: 20, bold: true, font: "Arial"}),
                                 ]
                             })],
                         }),
@@ -470,7 +478,7 @@ async function generateUsersExtraHoursResume(userInfoExtraHoursResume: UserInfoE
                             children: [new Paragraph({
                                 alignment: AlignmentType.CENTER,
                                 children: [
-                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor50}`, size: 20, bold: true, font: "Arial"}),
+                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor50 == 0 ? "" : info.userExtraHoursResume.hoursFor50}`, size: 20, bold: true, font: "Arial"}),
                                 ]
                             })],
                         }),
@@ -479,7 +487,7 @@ async function generateUsersExtraHoursResume(userInfoExtraHoursResume: UserInfoE
                             children: [new Paragraph({
                                 alignment: AlignmentType.CENTER,
                                 children: [
-                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor75}`, size: 20, bold: true, font: "Arial"}),
+                                    new TextRun({text: `${info.userExtraHoursResume.hoursFor75 == 0 ? "" : info.userExtraHoursResume.hoursFor75}`, size: 20, bold: true, font: "Arial"}),
                                 ]
                             })],
                         }),
@@ -548,7 +556,7 @@ async function generateUsersWeekendAndHolydaysExtraHoursResume(userInfoExtraHour
                         children: [new Paragraph({
                             alignment: AlignmentType.CENTER,
                             children: [
-                                new TextRun({text: `${info.userExtraHoursResume.hoursFor50HolyDays}`, size: 20, bold: true, font: "Arial"}),
+                                new TextRun({text: `${info.userExtraHoursResume.hoursFor50HolyDays == 0 ? "" : info.userExtraHoursResume.hoursFor50HolyDays}`, size: 20, bold: true, font: "Arial"}),
                             ]
                         })],
                     }),
@@ -558,7 +566,7 @@ async function generateUsersWeekendAndHolydaysExtraHoursResume(userInfoExtraHour
                         children: [new Paragraph({
                             alignment: AlignmentType.CENTER,
                             children: [
-                                new TextRun({text: `${info.userExtraHoursResume.hoursFor100HolyDays}`, size: 20, bold: true, font: "Arial"}),
+                                new TextRun({text: `${info.userExtraHoursResume.hoursFor100HolyDays == 0 ? "" : info.userExtraHoursResume.hoursFor100HolyDays}`, size: 20, bold: true, font: "Arial"}),
                             ]
                         })],
                     }),
@@ -763,6 +771,8 @@ const ExportHoursDocument: React.FC = () => {
         let capitansGender: HTMLSelectElement = document.getElementById("capitansGender") as HTMLSelectElement;
         let especiality: HTMLInputElement = document.getElementById("especiality") as HTMLInputElement;
 
+        let lastDay = getMonthYearLastDay();
+
         let fileGender: string = "";
         console.log(capitansGender.value);
         if (capitansGender.value == "1") {
@@ -842,15 +852,15 @@ const ExportHoursDocument: React.FC = () => {
                 },
                 sub_day: {
                     type: PatchType.PARAGRAPH,
-                    children: [new TextRun({text: "30"})],
+                    children: [new TextRun({text: lastDay.toString()})],
                 },
                 sub_month: {
                     type: PatchType.PARAGRAPH,
-                    children: [new TextRun({text: "JANEIRO"})],
+                    children: [new TextRun({text: monthElement.options[monthElement.selectedIndex].text, allCaps: true})],
                 },
                 sub_year: {
                     type: PatchType.PARAGRAPH,
-                    children: [new TextRun({text: "2020"})],
+                    children: [new TextRun({text: yearElement.value})],
                 },
                 capitans_name: {
                     type: PatchType.PARAGRAPH,
@@ -868,7 +878,7 @@ const ExportHoursDocument: React.FC = () => {
         });
 
         const blob = new Blob([generatedDocument], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-        saveAs(blob, `Horas_Suplementares_${monthElement.options[monthElement.selectedIndex].text}.docx`);
+        saveAs(blob, `Horas_Suplementares_${yearElement.value}_${monthElement.options[monthElement.selectedIndex].text}.docx`);
     };
 
     async function saveReportMetadata() {
