@@ -15,6 +15,29 @@ const formatDate = (dateString: string): string => {
     return `${day} ${month}`;
 };
 
+function getMonthLastDayDate(date: Date): Date {
+    let lastDayDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    //return lastDayDate.getDate();
+    return lastDayDate;
+}
+
+async function handleReportChangeMonthAndYear() {
+    let yearElment: HTMLSelectElement = document.getElementById("year") as HTMLSelectElement;
+    let monthElment: HTMLSelectElement = document.getElementById("month") as HTMLSelectElement;
+    let dateElement: HTMLInputElement = document.getElementById("date") as HTMLInputElement;
+
+    console.log(yearElment.value + " - " + monthElment.value);
+
+    let year: number = parseInt(yearElment.value, 10);
+    let month: number = parseInt(monthElment.value, 10);
+    let date: Date = new Date(year, month - 1);
+    let lastDayDate = getMonthLastDayDate(date);
+
+    const isoDate = lastDayDate.toISOString().split('T')[0];
+
+    dateElement.value = isoDate;
+}
+
 //TODO: Replace the 0s in the hours for week days and holydays/weekend by letting empty
 //TODO: Sort the JSON array by nip see https://dev.to/slimpython/sort-array-of-json-object-by-key-value-easily-with-javascript-3hke
 //TODO: Get the last day of an month for an year
@@ -898,6 +921,14 @@ const ExportHoursDocument: React.FC = () => {
         loadReportMetadata();
     }, []);
 
+    useEffect(() => {
+        // This will run only after the 'years' state is updated
+        if (years.length > 0) {
+          loadReportMetadata();
+          handleReportChangeMonthAndYear();
+        }
+    }, [years]); // Dependency on 'years' ensures this runs after the state is updated
+
     return (
         <>
             <main>
@@ -911,7 +942,7 @@ const ExportHoursDocument: React.FC = () => {
                     <div style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
                         <div className="col-12">
                             <label className="visually-hidden">Ano</label>
-                            <select className="form-select" id="year" name="year">
+                            <select className="form-select" id="year" name="year" onChange={handleReportChangeMonthAndYear}>
                                 <option disabled>Ano</option>
                                 {years.map((year) => (
                                     <option key={year} value={year}>
@@ -923,7 +954,7 @@ const ExportHoursDocument: React.FC = () => {
 
                         <div className="col-12">
                             <label className="visually-hidden">Preference</label>
-                            <select className="form-select" id="month" name="month" defaultValue={currentMonth}>
+                            <select className="form-select" id="month" name="month" onChange={handleReportChangeMonthAndYear} defaultValue={currentMonth}>
                                 <option disabled>Mês</option>
                                 <option value="01">Janeiro</option>
                                 <option value="02">Fevereiro</option>
@@ -979,8 +1010,8 @@ const ExportHoursDocument: React.FC = () => {
                         <div className="row mb-3">
                             <label htmlFor="capitansGender" className="col-sm-4 col-form-label">O/A Comandante</label>
                             <div className="col-sm-8">
-                                <select className="form-select" id="capitansGender" name="capitansGender" disabled={!editReportMetadata}>
-                                    <option value={1} selected>O</option>
+                                <select className="form-select" id="capitansGender" name="capitansGender" defaultValue={0} disabled={!editReportMetadata}>
+                                    <option value={1}>O</option>
                                     <option value={2}>A</option>
                                 </select>
                                 <div className="invalid-feedback">
