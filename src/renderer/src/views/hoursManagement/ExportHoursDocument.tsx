@@ -48,8 +48,6 @@ async function handleReportChangeMonthAndYear() {
     dateElement.value = isoDate;
 }
 
-//TODO: Sort the JSON array by nip see https://dev.to/slimpython/sort-array-of-json-object-by-key-value-easily-with-javascript-3hke
-
 //-------------- Tables Headers -------------//
 //Weekly
 const weeklyExtraHoursResumeHeader: TableRow = new TableRow({
@@ -755,7 +753,7 @@ const ExportHoursDocument: React.FC = () => {
         (new Date().getMonth() + 1).toString().padStart(2, '0')
     );
 
-    const generateDocument = async (event: FormEvent<HTMLFormElement>) => {
+    const generateDocument = async (event: FormEvent<HTMLFormElement>): Promise<Blob> => {
         event.preventDefault();
 
         const form: HTMLFormElement = event.target as HTMLFormElement
@@ -912,7 +910,7 @@ const ExportHoursDocument: React.FC = () => {
         });
 
         const blob = new Blob([generatedDocument], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-        saveAs(blob, `Horas_Suplementares_${yearElement.value}_${monthElement.options[monthElement.selectedIndex].text}.docx`);
+        return blob;
     };
 
     async function saveReportMetadata() {
@@ -973,6 +971,34 @@ const ExportHoursDocument: React.FC = () => {
         }
     }, [years]); // Dependency on 'years' ensures this runs after the state is updated
 
+    async function saveReport(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        const form: HTMLFormElement = event.target as HTMLFormElement
+
+        let yearElement: HTMLInputElement;
+        let monthElement: HTMLSelectElement
+
+        yearElement = form.elements.namedItem("year") as HTMLInputElement;
+        monthElement = form.elements.namedItem("month") as HTMLSelectElement;
+
+        try {
+            await toast.promise(
+                async () => {
+                    let blob = await generateDocument(event);
+                    saveAs(blob, `Horas_Suplementares_${yearElement.value}_${monthElement.options[monthElement.selectedIndex].text}.docx`);
+                },
+                {
+                    pending: 'A gerar documento...',
+                    success: 'Documento gerado!',
+                    error: 'Erro ao gerar documento!'
+                }
+            );
+        } catch (error) {
+            toast.error("Erro!");
+        }
+    }
+
     return (
         <>
             <main>
@@ -982,7 +1008,7 @@ const ExportHoursDocument: React.FC = () => {
                         Configurações
                     </button>
                 </div>
-                <form onSubmit={generateDocument} >
+                <form onSubmit={saveReport} >
                     <div style={{marginTop: '20px', marginBottom: '20px'}} className="row row-cols-lg-auto g-3 align-items-center">
                         <div className="col-12">
                             <label className="visually-hidden">Ano</label>
