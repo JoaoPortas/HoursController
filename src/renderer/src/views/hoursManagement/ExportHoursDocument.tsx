@@ -5,6 +5,7 @@ import { Paragraph, Table, TableCell, TableRow, TextRun, WidthType, AlignmentTyp
 import { saveAs } from "file-saver";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
 import { toast } from "react-toastify";
+import { ReportSettings } from "@shared/models/hours/reportSettings.model";
 
 const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -866,16 +867,20 @@ const ExportHoursDocument: React.FC = () => {
         setIsLoading(false);
     }
 
-    function loadReportMetadata() {
+    async function loadReportMetadata() {
         let patent: HTMLInputElement = document.getElementById("patent") as HTMLInputElement;
         let capitansName: HTMLInputElement = document.getElementById("capitansName") as HTMLInputElement;
         let capitansGender: HTMLSelectElement = document.getElementById("capitansGender") as HTMLSelectElement;
         let especiality: HTMLInputElement = document.getElementById("especiality") as HTMLInputElement;
 
-        patent.value = "Gold";
-        capitansName.value = "Martin Manhãs";
-        capitansGender.selectedIndex = 1;
-        especiality.value = "Master";
+        let reportMetadata: ReportSettings | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getReportMetadata") as ReportSettings | null;
+
+        console.log("meta", reportMetadata);
+
+        patent.value = reportMetadata?.patent ?? "N/A";
+        capitansName.value = reportMetadata?.commanderName ?? "N/A";
+        capitansGender.selectedIndex = reportMetadata?.commanderGender ?? 1;
+        especiality.value = reportMetadata?.commanderEspeciality ?? "N/A";
     }
 
     useEffect(() => {

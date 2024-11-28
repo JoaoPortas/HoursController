@@ -1,7 +1,8 @@
-import { createExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, getUserTotalHoursExcludingMonthByYear, updateExtraHoursRegist } from "@main/repository/extraHours.repository";
+import { createExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getReportMetadata, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, getUserTotalHoursExcludingMonthByYear, updateExtraHoursRegist } from "@main/repository/extraHours.repository";
 import { getAllUsersMonthlyExtraHoursReport, getUserMonthlyExtraHoursReport } from "@main/services/extraHoursCalculator.service";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
+import { ReportSettings } from "@shared/models/hours/reportSettings.model";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
 import { ipcMain } from "electron";
 import { saveAs } from "file-saver";
@@ -79,4 +80,10 @@ export function registHoursRoutes(routeName: string) {
         const blob = new Blob([generatedDocument], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
         saveAs(blob, `Horas_Suplementares_${123456}.docx`);
     });
+
+    ipcMain.handle(routeName + '/getReportMetadata', async (_event): Promise<ReportSettings | null> => {
+        const result = await getReportMetadata()
+        return result
+    });
+
 }

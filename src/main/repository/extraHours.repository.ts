@@ -3,6 +3,7 @@ import { BaseExtraHoursRegist } from "@shared/models/hours/extraHoursRegist.mode
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { IUsersExtraHoursRow } from "@shared/models/hours/interfaces/usersExtraHoursRow.interface";
+import { ReportSettings } from "@shared/models/hours/reportSettings.model";
 import { UserExtraHoursViewModel } from "@shared/viewModels/hoursManagement/userExtraHours.viewmodel";
 import { Statement } from "sqlite3";
 
@@ -409,4 +410,29 @@ export async function getUsersIDsWithExtraHoursInYearAndMonth(year: string, mont
 
         })
     })
+}
+
+export async function getReportMetadata(): Promise<ReportSettings | null> {
+    //console.log("Repository: Getting the user by ID" + userId)
+
+    const stmt: Statement = db.prepare('SELECT patent, commanderName, commanderGender, commanderEspeciality FROM reportConfiguration LIMIT 1');
+
+    return new Promise<ReportSettings | null>((resolve, reject) => {
+        stmt.get((err: Error | null, row : ReportSettings) => {
+            if (err) {
+                console.error(err.message);
+                reject(err)
+                return
+            }
+
+            if (row !== undefined) {
+                const metadata: ReportSettings | null = new ReportSettings(row.patent, row.commanderName, row.commanderGender, row.commanderEspeciality)
+                resolve(metadata)
+            }
+            else {
+                resolve(null)
+            }
+        });
+    })
+   return null
 }
