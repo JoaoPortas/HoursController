@@ -1,4 +1,4 @@
-import { createExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getReportMetadata, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, getUserTotalHoursExcludingMonthByYear, updateExtraHoursRegist } from "@main/repository/extraHours.repository";
+import { createExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getReportMetadata, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, getUserTotalHoursExcludingMonthByYear, updateExtraHoursRegist, updateReportMetada } from "@main/repository/extraHours.repository";
 import { getAllUsersMonthlyExtraHoursReport, getUserMonthlyExtraHoursReport } from "@main/services/extraHoursCalculator.service";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
@@ -83,6 +83,11 @@ export function registHoursRoutes(routeName: string) {
 
     ipcMain.handle(routeName + '/getReportMetadata', async (_event): Promise<ReportSettings | null> => {
         const result = await getReportMetadata()
+        return result
+    });
+
+    ipcMain.handle(routeName + '/updateReportMetadata', async (_event, newReportMetada: ReportSettings): Promise<ReportSettings | null> => {
+        const result = await updateReportMetada(newReportMetada)
         return result
     });
 

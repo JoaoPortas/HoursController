@@ -436,3 +436,29 @@ export async function getReportMetadata(): Promise<ReportSettings | null> {
     })
    return null
 }
+
+export async function updateReportMetada(newMetadata: ReportSettings): Promise<ReportSettings | null> {
+    return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            const stmt: Statement = db.prepare('UPDATE reportConfiguration SET patent = ?, commanderName = ?, commanderGender = ?, commanderEspeciality = ?')
+            stmt.run(
+                newMetadata.patent,
+                newMetadata.commanderName,
+                newMetadata.commanderGender,
+                newMetadata.commanderEspeciality,
+                async (err: Error) => {
+                    if (err) {
+                        console.error('Failed to update the report metada:', err)
+                        stmt.finalize()
+                        reject(err)
+                    }
+                    else {
+                        console.info('Report Metadata Updated', newMetadata)
+                        stmt.finalize()
+                        resolve(newMetadata)
+                    }
+                }
+            )
+        })
+    })
+}

@@ -755,7 +755,6 @@ const ExportHoursDocument: React.FC = () => {
 
         //let test = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserMonthlyExtraHoursReport", 1, yearElement.value, monthElement.value);
         let test: UserInfoExtraHoursResume[] = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersMonthlyExtraHoursReport", yearElement.value, monthElement.value) as UserInfoExtraHoursResume[];
-        console.log("TEST:", test);
 
         const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", yearElement.value, monthElement.value) as UserExtraHoursViewModel[];
 
@@ -849,7 +848,7 @@ const ExportHoursDocument: React.FC = () => {
         saveAs(blob, `Horas_Suplementares_${monthElement.options[monthElement.selectedIndex].text}.docx`);
     };
 
-    function saveReportMetadata() {
+    async function saveReportMetadata() {
         setIsLoading(true);
 
         let patent: HTMLInputElement = document.getElementById("patent") as HTMLInputElement;
@@ -858,6 +857,10 @@ const ExportHoursDocument: React.FC = () => {
         let especiality: HTMLInputElement = document.getElementById("especiality") as HTMLInputElement;
 
         let reportMetadataCheckbox: HTMLInputElement = document.getElementById("changeReportMetadataCheckbox") as HTMLInputElement;
+
+        let newMetadata: ReportSettings = new ReportSettings(patent.value, capitansName.value, capitansGender.selectedIndex, especiality.value);
+
+        await window.electron.ipcRenderer.invoke("/hoursManagement/updateReportMetadata", newMetadata) as ReportSettings | null;
 
         setEditReportMetada(false);
         reportMetadataCheckbox.checked = false;
