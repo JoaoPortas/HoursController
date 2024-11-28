@@ -789,7 +789,41 @@ const ExportHoursDocument: React.FC = () => {
         //let test = await window.electron.ipcRenderer.invoke("/hoursManagement/getUserMonthlyExtraHoursReport", 1, yearElement.value, monthElement.value);
         let test: UserInfoExtraHoursResume[] = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersMonthlyExtraHoursReport", yearElement.value, monthElement.value) as UserInfoExtraHoursResume[];
 
+        // Sort the array by the numeric part of the 'number' property
+        test.sort((a, b) => {
+            // Function to extract numeric value or return NaN if invalid
+            const getNumericValue = (str: string): number => {
+            const numericPart = str.split('-')[0]; // Extract the part before the hyphen
+            const parsed = parseInt(numericPart, 10);
+
+            // If the parsed value is NaN, it means it's invalid, return Infinity to push it to the end
+            return isNaN(parsed) ? Infinity : parsed;
+            };
+
+            const numA = getNumericValue(a.number);
+            const numB = getNumericValue(b.number);
+
+            return numA - numB;
+        });
+
         const usersHours: UserExtraHoursViewModel[] | null = await window.electron.ipcRenderer.invoke("/hoursManagement/getAllUsersExtraHoursByYearAndMonth", yearElement.value, monthElement.value) as UserExtraHoursViewModel[];
+        // Sort the array by the numeric part of the 'number' property
+        usersHours.sort((a, b) => {
+            // Function to extract numeric value or return NaN if invalid
+            const getNumericValue = (str: string): number => {
+            const numericPart = str.split('-')[0]; // Extract the part before the hyphen
+            const parsed = parseInt(numericPart, 10);
+
+            // If the parsed value is NaN, it means it's invalid, return Infinity to push it to the end
+            return isNaN(parsed) ? Infinity : parsed;
+            };
+
+            const numA = getNumericValue(a.nip);
+            const numB = getNumericValue(b.nip);
+
+            return numA - numB;
+        });
+
 
         //Weekly Workers Resume Table
         let weeklyWorkersResumeTable: TableRow[] = [];
