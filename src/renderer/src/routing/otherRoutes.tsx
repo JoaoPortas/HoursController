@@ -1,5 +1,4 @@
 import ProtectedRoute from "@renderer/redux/components/ProtectedRoute";
-import Disclaimer from "@renderer/views/Disclaimer/Disclaimer";
 import Vite from "@renderer/views/Vite";
 
 const otherRoutes = [

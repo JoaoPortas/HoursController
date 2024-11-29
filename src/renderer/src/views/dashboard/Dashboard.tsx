@@ -2,7 +2,6 @@ import { RootState } from "@renderer/redux/store";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
     const userId = useSelector((state: RootState) => state.userSession.userId)
