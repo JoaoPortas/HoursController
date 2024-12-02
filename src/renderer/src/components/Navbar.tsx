@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 
 const Navbar: React.FC = () => {
-    //const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
+    const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
     const name: string | null = useSelector((state: RootState) => state.userSession.name)
     const realName: string | null = useSelector((state: RootState) => state.userSession.realName)
 
@@ -81,6 +81,11 @@ const Navbar: React.FC = () => {
                 </a>
 
                 <div className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                  {userId === 1 && (
+                    <Link className="dropdown-item" to="/admin/usersManagement">
+                      Gerir Utilizadores
+                    </Link>
+                  )}
                   <Link className="dropdown-item" to="/settings/profileData">Editar informações</Link>
                   {/*<Link className="dropdown-item" to="/dashboard">Definições</Link>*/}
                   <Link className="dropdown-item" to="/">Sair</Link>

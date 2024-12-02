@@ -7,6 +7,8 @@ import ProtectedRoute from "@renderer/redux/components/ProtectedRoute";
 import Navbar from "@renderer/components/Navbar";
 import hoursControlRoutes from "./HoursManagement/hoursControl";
 import settingsRoutes from "./Settings/settings";
+import ProtectedAdminRoute from "@renderer/redux/components/ProtectedAdminRoute";
+import adminRoutes from "./Admin/admin";
 
 // Wrap each element with ProtectedRoute and Navbar
 const withProtectedRouteAndNavbar = (element: React.ReactNode) => (
@@ -14,6 +16,13 @@ const withProtectedRouteAndNavbar = (element: React.ReactNode) => (
         <Navbar />
         {element}
     </ProtectedRoute>
+);
+
+const withProtectedAdminRouteAndNavbar = (element: React.ReactNode) => (
+  <ProtectedAdminRoute>
+      <Navbar />
+      {element}
+  </ProtectedAdminRoute>
 );
 
 const routes = [
@@ -37,6 +46,10 @@ const routes = [
     ...settingsRoutes.map(route => ({
       ...route,
       element: withProtectedRouteAndNavbar(route.element),
+    })),
+    ...adminRoutes.map(route => ({
+      ...route,
+      element: withProtectedAdminRouteAndNavbar(route.element),
     })),
     ...otherRoutes
 ];
