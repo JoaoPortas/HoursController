@@ -1,5 +1,6 @@
 import { RootState } from "@renderer/redux/store";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
+import { UserInfoExtraHoursResume } from "@shared/models/hours/userInfoExtraHoursResume.model";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -21,109 +22,18 @@ const Dashboard: React.FC = () => {
 
     // Function to calculate hours and percentages
     async function calculateExtraHoursTiers(hours: IExtraHoursResume[]) {
-        let totalHours = 0;
-        let hoursFor25 = 0;
-        let hoursFor37Dot5 = 0;
-        let hoursFor50 = 0;
-        let hoursFor75 = 0;
-        let hoursFor50HolyDays = 0;
-        let hoursFor100HolyDays = 0;
+        let userAnnualYearsReport: UserInfoExtraHoursResume = await window.electron.ipcRenderer.invoke(
+            "/hoursManagement/getUserAnnualExtraHoursReport",
+            userId,
+            new Date().getFullYear().toString()
+        ) as UserInfoExtraHoursResume;
 
-        hours.forEach((elm: IExtraHoursResume) => {
-            if (elm.extraHours <= 0) return;
-
-            //Se as horas totais forem menor que zero adiciona a primeira a 25% e vê as restantes para adicionar a 37.5 se continuar <100
-            if (totalHours < 100) {
-                if (elm.dayTypeID === 1) {
-                    hoursFor25 += 1;
-                    elm.extraHours -= 1;
-                    totalHours += 1;
-
-                    if (elm.extraHours > 0) {
-                        //Guarda as horas totais atuais para uma variavel para validar se somar se o resto passa ou não das 100
-                        let tempTotalHours = totalHours
-                        tempTotalHours += elm.extraHours
-
-                        //Se as horas totais + as restantes não passa dos 100 então adiciona a 37.5
-                        if (tempTotalHours <= 100) {
-                            hoursFor37Dot5 += elm.extraHours
-                        }
-                        else { //Se as horas totais + as restantes passa dos 100 então calcula quantas horas n passa dos 100 e guarda numa varriável
-                            //E calcula as restantes que passam dos 100 e guarda a 50%
-
-                            //Guarda quantas horas que passaram das 100 para adicionar a 75%
-                            let restFor75 = tempTotalHours - 100
-
-                            //Tira as horas que têm que ir para os 75% calculadas anteriormente para obter para a var as horas até as 100 que vão continuar nos 37.5%
-                            let restFor37Dot5 = elm.extraHours - restFor75
-
-                            hoursFor37Dot5 += restFor37Dot5
-                            hoursFor75 += restFor75
-
-                        }
-                        totalHours += elm.extraHours
-                    }
-                }
-                else if (elm.dayTypeID === 2 || elm.dayTypeID === 3) {
-                    hoursFor50HolyDays += 1;
-                    elm.extraHours -= 1;
-                    totalHours += 1;
-
-                    if (elm.extraHours > 0) {
-                        //Guarda as horas totais atuais para uma variavel para validar se somar se o resto passa ou não das 100
-                        let tempTotalHours = totalHours
-                        tempTotalHours += elm.extraHours
-
-                        //Se as horas totais + as restantes não passa dos 100 então adiciona a 37.5
-                        if (tempTotalHours <= 100) {
-                            hoursFor50HolyDays += elm.extraHours
-                        }
-                        else { //Se as horas totais + as restantes passa dos 100 então calcula quantas horas n passa dos 100 e guarda numa varriável
-                            //E calcula as restantes que passam dos 100 e guarda a 50%
-
-                            //Guarda quantas horas que passaram das 100 para adicionar a 75%
-                            let restFor100HolyDays = tempTotalHours - 100
-
-                            //Tira as horas que têm que ir para os 75% calculadas anteriormente para obter para a var as horas até as 100 que vão continuar nos 37.5%
-                            let restFor50HolyDays = elm.extraHours - restFor100HolyDays
-
-                            hoursFor50HolyDays += restFor50HolyDays
-                            hoursFor100HolyDays += restFor100HolyDays
-
-                        }
-                        totalHours += elm.extraHours
-                    }
-                }
-            } //Se as horas totais já forem superiores a 100 então pode se adicionar de acordo com as percentagens 50% para a primeira hora e 75 para as restantes
-            else {
-                if (elm.dayTypeID === 1) {
-                    hoursFor50 += 1;
-                    elm.extraHours -= 1;
-                    totalHours += 1;
-
-                    hoursFor75 += elm.extraHours
-                }
-                else if (elm.dayTypeID === 2 || elm.dayTypeID === 3) {
-                    hoursFor100HolyDays += elm.extraHours;
-                }
-            }
-        });
-
-        console.log("Total hours: ", totalHours);
-        console.log("Hours at 25%: ", hoursFor25);
-        console.log("Hours at 37.5%: ", hoursFor37Dot5);
-        console.log("Hours at 50%: ", hoursFor50);
-        console.log("Hours at 75%: ", hoursFor75);
-
-        console.log("Hours Holy at 50%: ", hoursFor50HolyDays);
-        console.log("Hours Holy at 100%: ", hoursFor100HolyDays);
-
-        setHoursAt25(hoursFor25)
-        setHoursAt37Dot5(hoursFor37Dot5)
-        setHoursAt50(hoursFor50)
-        setHoursAt75(hoursFor75)
-        setHoursAt50HolyDays(hoursFor50HolyDays);
-        setHoursAt100HolyDays(hoursFor100HolyDays);
+        setHoursAt25(userAnnualYearsReport.userExtraHoursResume.hoursFor25)
+        setHoursAt37Dot5(userAnnualYearsReport.userExtraHoursResume.hoursFor37Dot5)
+        setHoursAt50(userAnnualYearsReport.userExtraHoursResume.hoursFor50)
+        setHoursAt75(userAnnualYearsReport.userExtraHoursResume.hoursFor75)
+        setHoursAt50HolyDays(userAnnualYearsReport.userExtraHoursResume.hoursFor50HolyDays);
+        setHoursAt100HolyDays(userAnnualYearsReport.userExtraHoursResume.hoursFor100HolyDays);
     }
 
     useEffect(() => {

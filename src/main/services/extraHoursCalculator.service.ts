@@ -1,4 +1,4 @@
-import { getUserExtraHoursByYearAndMonth, getUsersIDsWithExtraHoursInYearAndMonth, getUserTotalHoursExcludingMonthByYear } from "@main/repository/extraHours.repository";
+import { getUserExtraHoursByYear, getUserExtraHoursByYearAndMonth, getUsersIDsWithExtraHoursInYearAndMonth, getUserTotalHoursExcludingMonthByYear } from "@main/repository/extraHours.repository";
 import { getUserById } from "@main/repository/user.repository";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { UserExtraHoursResume } from "@shared/models/hours/userExtraHoursResume.model";
@@ -105,6 +105,7 @@ async function calculateUserExtraHoursMonthlyResume(userID: number, currentAccum
     return new UserExtraHoursResume(userID, hoursFor25, hoursFor37Dot5, hoursFor50, hoursFor75, hoursFor50HolyDays, hoursFor100HolyDays);
 }
 
+//TODO: Add an equal function but what works for an entiry year
 export async function getUserMonthlyExtraHoursReport(userID: number, year: string, month: string): Promise<UserInfoExtraHoursResume> {
     let currentUserTotalHours: number | null = await getUserTotalHoursExcludingMonthByYear(userID, year, month);
     if (currentUserTotalHours === null) currentUserTotalHours = 0;
@@ -133,4 +134,15 @@ export async function getAllUsersMonthlyExtraHoursReport(year: string, month: st
     let usersInfoExtraHoursResumes: UserInfoExtraHoursResume[] = await Promise.all(promises);
 
     return usersInfoExtraHoursResumes;
+}
+
+export async function getUserAnnualExtraHoursReport(userID: number, year: string): Promise<UserInfoExtraHoursResume> {
+    let userHours: IBaseExtraHoursRegist[] | null = await getUserExtraHoursByYear(userID, year);
+
+    let extraHoursResume: UserExtraHoursResume = await calculateUserExtraHoursMonthlyResume(userID, 0, userHours);
+
+    let user: IUser | null = await getUserById(userID);
+    let userInfoExtraHoursResume: UserInfoExtraHoursResume = new UserInfoExtraHoursResume(userID, user?.number ?? "n/a", user?.category ?? "n/a", user?.position ?? "n/a", user?.name ?? "n/a", extraHoursResume);
+
+    return userInfoExtraHoursResume;
 }

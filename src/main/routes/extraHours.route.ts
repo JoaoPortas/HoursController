@@ -1,5 +1,5 @@
 import { createExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getReportMetadata, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, getUserTotalHoursExcludingMonthByYear, updateExtraHoursRegist, updateReportMetada } from "@main/repository/extraHours.repository";
-import { getAllUsersMonthlyExtraHoursReport, getUserMonthlyExtraHoursReport } from "@main/services/extraHoursCalculator.service";
+import { getAllUsersMonthlyExtraHoursReport, getUserAnnualExtraHoursReport, getUserMonthlyExtraHoursReport } from "@main/services/extraHoursCalculator.service";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
 import { ReportSettings } from "@shared/models/hours/reportSettings.model";
@@ -91,4 +91,8 @@ export function registHoursRoutes(routeName: string) {
         return result
     });
 
+    ipcMain.handle(routeName + '/getUserAnnualExtraHoursReport', async (_event, userID: number, year: string): Promise<any> => {
+        const result = await getUserAnnualExtraHoursReport(userID, year);
+        return result
+    });
 }

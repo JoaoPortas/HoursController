@@ -462,3 +462,38 @@ export async function updateReportMetada(newMetadata: ReportSettings): Promise<R
         })
     })
 }
+
+export async function getUserExtraHoursByYear(userID: number, year: string): Promise<IBaseExtraHoursRegist[] | null> {
+    return new Promise((resolve, reject) => {
+        let userHours: IBaseExtraHoursRegist[] = [];
+
+        db.serialize(() => {
+            const sql: string = `
+                SELECT date, userId, morningStartTime, morningEndTime, afternoonStartTime, afternoonEndTime, strftime('%Y', date) AS 'Year', strftime('%m', date) AS 'Month', dayTypeID, extraHours
+                FROM vUsersExtraHoursRows
+                WHERE userId = ? AND Year = ? ORDER BY number ASC, date ASC
+            `
+
+            const stmt: Statement = db.prepare(sql);
+
+            stmt.all(
+                userID,
+                year,
+                (err: Error | null, rows : Array<IUsersExtraHoursRow>) => {
+                    if (err) {
+                        console.error("Failed to fetching user extra hours from database: ", err.message)
+                        reject(err)
+                        return;
+                    }
+
+                    rows.forEach((row: IUsersExtraHoursRow) => {
+                        userHours.push(new BaseExtraHoursRegist(row.date, row.userId, row.morningStartTime, row.morningEndTime, row.afternoonStartTime, row.afternoonEndTime, row.dayTypeID, row.extraHours))
+                    })
+
+                    resolve(userHours)
+            });
+
+
+        })
+    })
+}
