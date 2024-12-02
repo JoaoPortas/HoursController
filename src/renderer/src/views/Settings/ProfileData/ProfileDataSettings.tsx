@@ -1,16 +1,23 @@
+import { RootState } from '@renderer/redux/store'
+import { IUser } from '@shared/models/interfaces/user.interface'
 import React, { FormEvent, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
 const ProfileDataSettings: React.FC = () => {
+    const userId = useSelector((state: RootState) => state.userSession.userId)
+
     async function loadUserData() {
         const nameElment:HTMLInputElement = document.getElementById("name") as HTMLInputElement
         const personalIdElment:HTMLInputElement = document.getElementById("number") as HTMLInputElement
         const categoryElment:HTMLInputElement = document.getElementById("category") as HTMLInputElement
         const workerFunctionElment:HTMLInputElement = document.getElementById("function") as HTMLInputElement
 
-        nameElment.value = "Teste";
-        personalIdElment.value = "1";
-        categoryElment.value = "2";
-        workerFunctionElment.value = "3";
+        let userData: IUser = await window.electron.ipcRenderer.invoke("/users/getUserByID", userId) as IUser;
+
+        nameElment.value = userData.name;
+        personalIdElment.value = userData.number;
+        categoryElment.value = userData.category;
+        workerFunctionElment.value = userData.position;
     }
 
     async function updateUser(event: FormEvent<HTMLFormElement>) {

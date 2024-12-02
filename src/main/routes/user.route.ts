@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { UserRegist } from '@shared/models/auth.model';
-import { authenticateUser, checkUsername, createUser, getAllUsers, something } from '@main/repository/user.repository';
+import { authenticateUser, checkUsername, createUser, getAllUsers, getUserById, something } from '@main/repository/user.repository';
 import { IUser } from '@shared/models/interfaces/user.interface';
 import { IUserAuth } from '@shared/models/interfaces/userAuth.interface';
 
@@ -33,6 +33,11 @@ export function registUsersRoutes(routeName: string) {
 
     ipcMain.handle(routeName + '/authenticateUser', async (_event, userAuth: IUserAuth): Promise<number | null> => {
         const result = await authenticateUser(userAuth)
+        return result
+    })
+
+    ipcMain.handle(routeName + '/getUserByID', async (_event, userID: number): Promise<IUser | null> => {
+        const result = await getUserById(userID)
         return result
     })
 }

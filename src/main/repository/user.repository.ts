@@ -32,13 +32,13 @@ export async function createUser(newUser: UserRegist): Promise<UserRegist | null
                     if (err) {
                         console.error('Failed to create the user:', err)
                         stmt.finalize()
-                        await delay(5000)
+                        //await delay(5000)
                         reject(err)
                     }
                     else {
                         console.info('New user created', newUser)
                         stmt.finalize()
-                        await delay(5000)
+                        //await delay(5000)
                         resolve(newUser)
                     }
                 }
@@ -143,5 +143,4 @@ export async function getUserById(userId:number): Promise<IUser | null> {
             }
         });
     })
-   return null
 }
