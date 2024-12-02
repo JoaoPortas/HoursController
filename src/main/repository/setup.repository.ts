@@ -20,7 +20,17 @@ export async function setupUsers() {
           ',category TEXT' +
           ',position TEXT' +
       ')');
-  })
+  });
+
+  db.prepare('SELECT COUNT(userId) AS total FROM users').get(
+    (_err: Error | null, row: { total: number }) => {
+        //console.log(row.total)
+
+        if (row.total == 0) {
+            db.prepare('INSERT INTO users(username, password, number, name, category, position) VALUES ("admin", "admin", "admin", "admin", "admin", "admin")').run()
+        }
+    }
+    )
 }
 
 export async function setupDayTypes() {
