@@ -6,6 +6,7 @@ import otherRoutes from "./otherRoutes";
 import ProtectedRoute from "@renderer/redux/components/ProtectedRoute";
 import Navbar from "@renderer/components/Navbar";
 import hoursControlRoutes from "./HoursManagement/hoursControl";
+import settingsRoutes from "./Settings/settings";
 
 // Wrap each element with ProtectedRoute and Navbar
 const withProtectedRouteAndNavbar = (element: React.ReactNode) => (
@@ -32,7 +33,11 @@ const routes = [
     ...hoursControlRoutes.map(route => ({
       ...route,
       element: withProtectedRouteAndNavbar(route.element),
-  })),
+    })),
+    ...settingsRoutes.map(route => ({
+      ...route,
+      element: withProtectedRouteAndNavbar(route.element),
+    })),
     ...otherRoutes
 ];
 

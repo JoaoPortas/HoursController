@@ -81,8 +81,8 @@ const Navbar: React.FC = () => {
                 </a>
 
                 <div className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                  {/*<Link className="dropdown-item" to="/dashboard">Gerir informações</Link>
-                  <Link className="dropdown-item" to="/dashboard">Definições</Link>*/}
+                  <Link className="dropdown-item" to="/settings/profileData">Editar informações</Link>
+                  {/*<Link className="dropdown-item" to="/dashboard">Definições</Link>*/}
                   <Link className="dropdown-item" to="/">Sair</Link>
                 </div>
               </li>
