@@ -288,6 +288,19 @@ const HoursRegist: React.FC = () => {
         };
     }, [wasValidated]);
 
+    async function deleteRegisteredHours() {
+        const dateElement: HTMLInputElement = document.getElementById("date") as HTMLInputElement;
+
+        let successfulDeleted: boolean = await window.electron.ipcRenderer.invoke("/hoursManagement/delete", dateElement.value, userId) as boolean
+    
+        if (successfulDeleted) {
+            toast.success("deleted");
+        }
+        else {
+            toast.error("error");
+        }
+    }
+
     return (
         <>
             <main>
@@ -355,6 +368,12 @@ const HoursRegist: React.FC = () => {
                                 *Preencha as horas na parte da manhã, da tarde ou nas duas
                             </div>
                             <button type="submit" className="btn btn-primary w-100" disabled={isDisabled}>{isUpdate ? 'Atualizar horas' : 'Registar'}</button>
+                        </div>
+                    </div>
+                    <div className="row mb-3">
+                        <div className="col-sm-4"></div>
+                        <div className="col-sm-8">
+                            <button type="button" onClick={deleteRegisteredHours} className="btn btn-primary w-100" disabled={isDisabled || !isUpdate}>Apagar Registo</button>
                         </div>
                     </div>
                 </form>

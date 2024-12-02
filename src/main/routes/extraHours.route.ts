@@ -1,4 +1,4 @@
-import { createExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getReportMetadata, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, getUserTotalHoursExcludingMonthByYear, updateExtraHoursRegist, updateReportMetada } from "@main/repository/extraHours.repository";
+import { createExtraHoursRegist, deleteExtraHoursRegist, getAllUsersExtraHoursByYearAndMonth, getReportMetadata, getUserAllExtraHours, getUserAllExtraHoursByYearAndMonth, getUserAllExtraHoursResumeByYear, getUserAllExtraHoursResumeByYearAndMonth, getUserExtraHoursByDate, getUserTotalHoursExcludingMonthByYear, updateExtraHoursRegist, updateReportMetada } from "@main/repository/extraHours.repository";
 import { getAllUsersMonthlyExtraHoursReport, getUserAnnualExtraHoursReport, getUserMonthlyExtraHoursReport } from "@main/services/extraHoursCalculator.service";
 import { IExtraHoursResume } from "@shared/models/hours/interfaces/extraHoursResume.interface";
 import { IBaseExtraHoursRegist } from "@shared/models/hours/interfaces/hoursRegist.interface";
@@ -16,6 +16,11 @@ export function registHoursRoutes(routeName: string) {
 
     ipcMain.handle(routeName + '/update', async (_event, newExtraHours: IBaseExtraHoursRegist): Promise<IBaseExtraHoursRegist | null> => {
         const result = await updateExtraHoursRegist(newExtraHours)
+        return result
+    })
+
+    ipcMain.handle(routeName + '/delete', async (_event, date: string, userID: number): Promise<boolean | null> => {
+        const result = await deleteExtraHoursRegist(date, userID)
         return result
     })
 

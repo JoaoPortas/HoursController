@@ -66,6 +66,32 @@ export async function updateExtraHoursRegist(newExtraHours: IBaseExtraHoursRegis
     })
 }
 
+//Finish the delete registered hours
+export async function deleteExtraHoursRegist(date: string, userID: number): Promise<boolean | null> {
+    return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            const stmt: Statement = db.prepare("DELETE FROM extraHours WHERE date = ? AND userID = ?")
+
+            stmt.run(
+                date,
+                userID,
+                async (err: Error) => {
+                    if (err) {
+                        console.error('Failed to delete the extra hours for user:', err)
+                        stmt.finalize()
+                        reject(err)
+                    }
+                    else {
+                        console.info('Extra hours deleted for the user:', userID)
+                        stmt.finalize()
+                        resolve(true)
+                    }
+                }
+            )
+        })
+    })
+}
+
 export async function getUserAllExtraHours(userID:number): Promise<UserExtraHoursViewModel | null> {
     return new Promise((resolve, reject) => {
         const userHours: IBaseExtraHoursRegist[] = []
