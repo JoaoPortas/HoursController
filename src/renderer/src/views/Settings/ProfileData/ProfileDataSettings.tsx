@@ -1,7 +1,9 @@
 import { RootState } from '@renderer/redux/store'
 import { IUser } from '@shared/models/interfaces/user.interface'
+import { User } from '@shared/models/user.model'
 import React, { FormEvent, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
 
 const ProfileDataSettings: React.FC = () => {
     const userId = useSelector((state: RootState) => state.userSession.userId)
@@ -30,7 +32,22 @@ const ProfileDataSettings: React.FC = () => {
         const category:string = (form.elements.namedItem("category") as HTMLInputElement).value
         const workerFunction:string = (form.elements.namedItem("function") as HTMLInputElement).value
 
-        alert(123);
+        let newUserData:IUser = new User(userId ?? 0, "N/A", personalId, name, category, workerFunction);
+
+        try {
+            const response: IUser | null = await toast.promise(
+                window.electron.ipcRenderer.invoke("/users/updateUserDataByUserID", userId, newUserData) as Promise<IUser | null>,
+                {
+                  pending: 'A Atualizar dados...',
+                  success: 'Dados atualizados',
+                  error: 'Erro ao atualizar dados!'
+                }
+            );
+        }
+        catch (error) {
+            /*console.error("Error creating user:", error);
+            setIsDisabled(false)*/
+        }
     }
 
     useEffect(() => {

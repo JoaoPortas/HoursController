@@ -144,3 +144,30 @@ export async function getUserById(userId:number): Promise<IUser | null> {
         });
     })
 }
+
+export async function updateUserDataByUserID(userID: number, userData:IUser): Promise<IUser | null> {
+    //console.log("Repository: Getting the user by ID" + userId)
+
+    const stmt: Statement = db.prepare('UPDATE users SET number = ?, name = ?, category = ?, position = ? WHERE userId = ?');
+
+    return new Promise<IUser | null>((resolve, reject) => {
+        stmt.run(userData.number,
+            userData.name,
+            userData.category,
+            userData.position,
+            userID,
+            async (err: Error) => {
+                if (err) {
+                    console.error('Failed updating the user data: ', err)
+                    stmt.finalize()
+                    reject(err)
+                }
+                else {
+                    console.info('User data updated: ', userData)
+                    stmt.finalize()
+                    resolve(userData)
+                }
+            }
+        );
+    })
+}
