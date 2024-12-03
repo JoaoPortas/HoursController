@@ -291,13 +291,21 @@ const HoursRegist: React.FC = () => {
     async function deleteRegisteredHours() {
         const dateElement: HTMLInputElement = document.getElementById("date") as HTMLInputElement;
 
-        let successfulDeleted: boolean = await window.electron.ipcRenderer.invoke("/hoursManagement/delete", dateElement.value, userId) as boolean
-    
+        let successfulDeleted: boolean = await toast.promise(
+            window.electron.ipcRenderer.invoke("/hoursManagement/delete", dateElement.value, userId) as Promise<boolean>,
+            {
+              pending: 'Porfavor aguarde...',
+              success: 'Registo de horas apagado',
+              error: 'Erro'
+            }
+        );
+
         if (successfulDeleted) {
-            toast.success("deleted");
-        }
-        else {
-            toast.error("error");
+            setMorningStartRegisted("N/A")
+            setMorningEndRegisted("N/A")
+            setAfternoonStartRegisted("N/A")
+            setAfternoonEndRegisted("N/A")
+            setUpdate(false)
         }
     }
 
