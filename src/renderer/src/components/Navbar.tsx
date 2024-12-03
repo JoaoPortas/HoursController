@@ -77,7 +77,7 @@ const Navbar: React.FC = () => {
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  {name} | {realName}
+                  {realName}
                 </a>
 
                 <div className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

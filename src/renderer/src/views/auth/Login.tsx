@@ -2,6 +2,7 @@ import { setUserSession } from "@renderer/redux/features/userSession/userSession
 import { AppDispatch } from "@renderer/redux/store";
 import { UserAuth } from "@shared/models/auth.model";
 import { IUserAuth } from "@shared/models/interfaces/userAuth.interface";
+import { User } from "@shared/models/user.model";
 import React, { CSSProperties, FormEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
@@ -37,8 +38,8 @@ const Login: React.FC = () => {
         const authUser: IUserAuth = new UserAuth(username, password)
 
         try {
-            const response: number | null = await toast.promise(
-                window.electron.ipcRenderer.invoke("/users/authenticateUser", authUser) as Promise<number | null>,
+            const response: User | null = await toast.promise(
+                window.electron.ipcRenderer.invoke("/users/authenticateUser", authUser) as Promise<User | null>,
                 {
                   pending: 'Porfavor aguarde...'
                 }
@@ -46,7 +47,7 @@ const Login: React.FC = () => {
 
             console.log('res: ', response)
             if (response !== null) {
-                dispatch(setUserSession({userId: response, name: username, realName: "Not Implemented"}))
+                dispatch(setUserSession({userId: response.userId, name: username, realName: response.name}))
                 toast.success('Autenticação feita com sucesso')
                 navigate("/dashboard")
             }

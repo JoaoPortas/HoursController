@@ -94,14 +94,14 @@ export async function checkUsername(username: string): Promise<boolean> {
     })
 }
 
-export async function authenticateUser(userAuth: IUserAuth): Promise<number | null> {
+export async function authenticateUser(userAuth: IUserAuth): Promise<User | null> {
     return new Promise((resolve, reject) => {
-        const stmt: Statement = db.prepare('SELECT userId FROM users WHERE username = ? AND password = ?')
+        const stmt: Statement = db.prepare('SELECT userId, name FROM users WHERE username = ? AND password = ?')
 
         stmt.get(
             userAuth.username,
             userAuth.password,
-            (err: Error | null, row: { userId: number }) => {
+            (err: Error | null, row: { userId: number, name: string }) => {
                 if (err) {
                     console.error("Failed to signIn user from database: ", err.message)
                     reject(err)
@@ -111,7 +111,7 @@ export async function authenticateUser(userAuth: IUserAuth): Promise<number | nu
                 const loginFound = row !== undefined
 
                 if (loginFound) {
-                    resolve(row.userId)
+                    resolve(new User(row.userId, "", "", row.name, "", ""))
                 }
                 else {
                     resolve(null)
