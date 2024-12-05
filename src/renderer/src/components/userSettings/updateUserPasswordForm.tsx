@@ -53,7 +53,7 @@ const UpdatateUserPasswordForm: React.FC = () => {
             <div className="row mb-3">
                 <label htmlFor="name" className="col-sm-4 col-form-label">Novo Código de Acesso*</label>
                 <div className="col-sm-8">
-                    <input type="text" className="form-control" id="newPassword" name="newPassword" required/>
+                    <input type="password" className="form-control" id="newPassword" name="newPassword" required/>
                     <div className="invalid-feedback">
                         *Campo de preenchimento obrigatório
                     </div>
