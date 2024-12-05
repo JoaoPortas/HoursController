@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
           aria-labelledby="offcanvasNavbarLabel"
         >
           <div className="offcanvas-header">
-            <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
+            <h5 className="offcanvas-title" id="offcanvasNavbarLabel">EHours</h5>
             <button
               type="button"
               className="btn-close"

@@ -31,6 +31,7 @@ const ProfileDataSettings: React.FC = () => {
                             role="tab"
                             aria-controls="v-pills-home"
                             aria-selected="true"
+                            style={{width: "150px"}}
                         >
                             Informações
                         </button>
@@ -45,6 +46,7 @@ const ProfileDataSettings: React.FC = () => {
                             role="tab"
                             aria-controls="v-pills-profile"
                             aria-selected="false"
+                            style={{width: "150px"}}
                         >
                             Segurança
                         </button>
