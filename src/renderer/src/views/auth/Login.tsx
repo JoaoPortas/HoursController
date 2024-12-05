@@ -79,11 +79,11 @@ const Login: React.FC = () => {
         })
     }, []);
 
-    async function forceLogin() {
+    /*async function forceLogin() {
         dispatch(setUserSession({userId: 1, name: "Pedro Alves", realName: "DEMO"}))
         toast.warning('Autenticação forçada')
         navigate("/dashboard")
-    }
+    }*/
 
     return (
         <main>
@@ -117,12 +117,12 @@ const Login: React.FC = () => {
                             <button type="submit" className="btn btn-primary w-100" disabled={isDisabled}>Entrar</button>
                         </div>
                     </div>
-                    <div className="row mb-3">
+                    {/*<div className="row mb-3">
                         <div className="col-sm-4"></div>
                         <div className="col-sm-8 d-flex justify-content-end">
                             <button onClick={forceLogin} type="button" className="btn btn-primary w-100">Force login</button>
                         </div>
-                    </div>
+                    </div>*/}
                 </form>
             </div>
         </main>

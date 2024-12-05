@@ -22,10 +22,10 @@ const Signup: React.FC = () => {
     const [isDisabled, setIsDisabled] = useState(false)
     const [usernameAlreadyExists, setUsernameAlreadyExists] = useState(false)
 
-    async function testDB() {
+    /*async function testDB() {
         const result = await window.electron.ipcRenderer.invoke("/users/getAll");
         console.log(result)
-    }
+    }*/
 
     async function createUser(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
@@ -176,12 +176,12 @@ const Signup: React.FC = () => {
                             <button id="createUserBtn" type="submit" className="btn btn-primary w-100" disabled={isDisabled}>Registar Utilizador</button>
                         </div>
                     </div>
-                    <div className="row mb-3">
+                    {/*<div className="row mb-3">
                         <div className="col-sm-4"></div>
                         <div className="col-sm-8 d-flex justify-content-end">
                             <button type="button" onClick={testDB} className="btn btn-primary w-100">Testar</button>
                         </div>
-                    </div>
+                    </div>*/}
                 </form>
             </div>
         </main>
