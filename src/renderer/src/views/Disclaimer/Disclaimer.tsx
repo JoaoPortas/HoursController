@@ -12,6 +12,13 @@ const Disclaimer: React.FC = () => {
                 A plataforma EHours armazena todos os dados localmente, no dispositivo do utilizador, junto à aplicação, não havendo qualquer transmissão de informações para servidores externos.
                 Este modelo assegura que os dados permanecem no controlo exclusivo do utilizador.</p>
             </div>
+
+            <div style={{width: "100%", position: "absolute", bottom: "60px"}}>
+                <div style={{display: "flex", flexDirection: "column", textAlign: "center", color: "#555555"}}>
+                    <span>Developed by JPortas</span>
+                    <span>05/12/2024</span>
+                </div>
+            </div>
         </>
     )
 }

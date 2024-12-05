@@ -26,7 +26,7 @@ const UsersManagement: React.FC = () => {
 
     return (
         <main>
-            <h1>Users Management</h1>
+            <h1>Gestão de Utilizadores</h1>
 
             <table className="table table-striped">
                     <thead>
