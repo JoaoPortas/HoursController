@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { UserRegist } from '@shared/models/auth.model';
-import { authenticateUser, checkUsername, createUser, getAllUsers, getUserById, something, updateUserDataByUserID } from '@main/repository/user.repository';
+import { authenticateUser, checkUsername, createUser, getAllUsers, getUserById, something, updateUserDataByUserID, updateUserPasswordByUserID } from '@main/repository/user.repository';
 import { IUser } from '@shared/models/interfaces/user.interface';
 import { IUserAuth } from '@shared/models/interfaces/userAuth.interface';
 import { User } from '@shared/models/user.model';
@@ -44,6 +44,11 @@ export function registUsersRoutes(routeName: string) {
 
     ipcMain.handle(routeName + '/updateUserDataByUserID', async (_event, userID: number, userData: IUser): Promise<IUser | null> => {
         const result = await updateUserDataByUserID(userID, userData)
+        return result
+    })
+
+    ipcMain.handle(routeName + '/updateUserPasswordByUserID', async (_event, userID: number, newPassword: string): Promise<boolean> => {
+        const result = await updateUserPasswordByUserID(userID, newPassword)
         return result
     })
 }

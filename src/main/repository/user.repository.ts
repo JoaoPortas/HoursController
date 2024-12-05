@@ -171,3 +171,27 @@ export async function updateUserDataByUserID(userID: number, userData:IUser): Pr
         );
     })
 }
+
+export async function updateUserPasswordByUserID(userID: number, newPassword: string): Promise<boolean> {
+    //console.log("Repository: Getting the user by ID" + userId)
+
+    const stmt: Statement = db.prepare('UPDATE users SET password = ? WHERE userId = ?');
+
+    return new Promise<boolean>((resolve, reject) => {
+        stmt.run(newPassword,
+            userID,
+            async (err: Error) => {
+                if (err) {
+                    console.error('Failed updating the user password: ', err)
+                    stmt.finalize()
+                    reject(err)
+                }
+                else {
+                    console.info('User password updated: ', userID)
+                    stmt.finalize()
+                    resolve(true)
+                }
+            }
+        );
+    })
+}

@@ -1,7 +1,11 @@
+import { RootState } from "@renderer/redux/store";
 import React, { FormEvent, useEffect } from "react"
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const UpdatateUserPasswordForm: React.FC = () => {
-    
+    const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
+
     async function updateUserPassword(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
@@ -9,21 +13,18 @@ const UpdatateUserPasswordForm: React.FC = () => {
 
         const newPassword:string = (form.elements.namedItem("newPassword") as HTMLInputElement).value
 
-        //TODO: Request update password
-        /*let newUserData:IUser = new User(userId ?? 0, "N/A", personalId, name, category, workerFunction);
-
         try {
-            const response: IUser | null = await toast.promise(
-                window.electron.ipcRenderer.invoke("/users/updateUserDataByUserID", userId, newUserData) as Promise<IUser | null>,
+            await toast.promise(
+                window.electron.ipcRenderer.invoke("/users/updateUserPasswordByUserID", userId, newPassword) as Promise<boolean>,
                 {
-                  pending: 'A Atualizar dados...',
-                  success: 'Dados atualizados',
-                  error: 'Erro ao atualizar dados!'
+                  pending: 'A redefenir código de acesso...',
+                  success: 'Novo código de acesso defenido!',
+                  error: 'Erro'
                 }
             );
         }
         catch (error) {
-        }*/
+        }
     }
 
 
