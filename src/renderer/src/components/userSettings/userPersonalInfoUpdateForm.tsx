@@ -35,7 +35,7 @@ const UserPersonalInfoForm: React.FC = () => {
         let newUserData:IUser = new User(userId ?? 0, "N/A", personalId, name, category, workerFunction);
 
         try {
-            const response: IUser | null = await toast.promise(
+            await toast.promise(
                 window.electron.ipcRenderer.invoke("/users/updateUserDataByUserID", userId, newUserData) as Promise<IUser | null>,
                 {
                   pending: 'A Atualizar dados...',

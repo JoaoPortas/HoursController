@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
     const [hoursAt100HolyDays, setHoursAt100HolyDays] = useState(0)
 
     // Function to calculate hours and percentages
-    async function calculateExtraHoursTiers(hours: IExtraHoursResume[]) {
+    async function calculateExtraHoursTiers(_hours: IExtraHoursResume[]) {
         let userAnnualYearsReport: UserInfoExtraHoursResume = await window.electron.ipcRenderer.invoke(
             "/hoursManagement/getUserAnnualExtraHoursReport",
             userId,

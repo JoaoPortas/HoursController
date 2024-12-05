@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 
 const Navbar: React.FC = () => {
     const userId: number | null = useSelector((state: RootState) => state.userSession.userId)
-    const name: string | null = useSelector((state: RootState) => state.userSession.name)
+    //const name: string | null = useSelector((state: RootState) => state.userSession.name)
     const realName: string | null = useSelector((state: RootState) => state.userSession.realName)
 
   return (
