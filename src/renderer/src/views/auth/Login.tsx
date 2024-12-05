@@ -104,7 +104,7 @@ const Login: React.FC = () => {
                     <div className="row mb-3">
                         <label htmlFor="password" className="col-sm-4 col-form-label">Código de acesso*</label>
                         <div className="col-sm-8">
-                            <input onChange={() => setAuthError(false)} style={hasAuthError ? errorStyle : {}} type="password" className="form-control" id="password" name="password" required/>
+                            <input onChange={() => setAuthError(false)} style={hasAuthError ? errorStyle : {}} type="password" className="form-control" id="password" name="password"/>
                             <div className="invalid-feedback">
                                 *Campo de preenchimento obrigatório
                             </div>

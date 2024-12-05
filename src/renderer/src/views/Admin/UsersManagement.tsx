@@ -5,8 +5,15 @@ import { toast } from 'react-toastify';
 const UsersManagement: React.FC = () => {
     const [users, setUsers] = useState<Array<IUser>>();
 
-    async function resetPassword() {
-        toast.success("Código de acesso removido! Este utilizador pode agora aceder sem código de acesso");
+    async function resetPassword(userID: number, name: string) {
+        await toast.promise(
+            window.electron.ipcRenderer.invoke("/admin/resetUserPassword", userID) as Promise<boolean>,
+            {
+              pending: 'A redefenir código de acesso...',
+              success: "Código de acesso de " + name + " removido! Este utilizador pode agora aceder sem código de acesso",
+              error: 'Erro ao rdefenir código de acesso'
+            }
+        );
     }
 
     useEffect(() => {
@@ -34,7 +41,7 @@ const UsersManagement: React.FC = () => {
                     {users && users.map((user: IUser, index) => (
                         <Fragment key={index}>
                             <tr>
-                                <td><button onClick={resetPassword}>Reset Password</button></td>
+                                <td><button onClick={() => resetPassword(user.userId, user.name)}>Reset Password</button></td>
                                 <td>{user.userId}</td>
                                 <td>{user.name}</td>
                                 <td>{user.number}</td>
