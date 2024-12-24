@@ -1,3 +1,9 @@
+# About this project
+This is an application that serves to track extra hours, which are paid according to a released Portuguese law, with different values depending on the amount of extra hours, the day the worker works, and whether it is the first or second extra hour of that day.
+The workers can register their extra hours, and then the application is able to generate a report with all the users and the extra hours worked, along with the extra pay each one should receive.
+This software has the restriction of not being built as a website and must be a desktop application with the data stored locally (SQLite), as requested by the person who commissioned the project. Additionally, the software is required to be built with React and TypeScript (which I found not so easy to develop with Electron as an offline application).
+This software is not affiliated with any company and does not have any commercial objectives.
+
 # electron-app
 
 An Electron application with React and TypeScript
