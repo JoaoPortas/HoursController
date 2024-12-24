@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>EHours</title>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
+    />
+    <link href="./src/public/vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="./src/public/css/root.css" rel="stylesheet">
+    <style>
+        .app-version-position {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: #555555;
+        }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <div class="app-version-position">V1.0</div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/public/vendor/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
